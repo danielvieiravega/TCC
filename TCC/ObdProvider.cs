@@ -20,7 +20,6 @@ namespace TCC
         public  ObdProvider(string deviceName)
         {
             DeviceName = deviceName;
-
         }
 
         public async Task ConfigureConnectionToElmAdapter()
@@ -38,7 +37,10 @@ namespace TCC
 
             await StreamSocket.ConnectAsync(_deviceService.ConnectionHostName,
                 _deviceService.ConnectionServiceName);
-            
+
+            var sss = "";
+
         }
-    }
+
+      }
 }
