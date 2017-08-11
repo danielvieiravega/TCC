@@ -9,7 +9,7 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <controls:Gauge x:Name="RadialGaugeControl"
+        <controls:Gauge x:Name="GaugeSpeed"
                               Value="0"
                               Minimum="0"
                               Maximum="180"
@@ -19,9 +19,40 @@
                               ScaleTickBrush="{ThemeResource BackButtonForegroundThemeBrush}"
                               UnitBrush="Black"
                               ValueBrush="Black" 
-                              Height="90"  
-                              Width="90" Margin="53,113,625,229"
+                              Height="150"  
+                              Width="150"
+                            Margin="37,61,581,221"
                         >
         </controls:Gauge>
+        <controls:Gauge x:Name="GaugeRpm"
+            Value="0"
+            Minimum="0"
+            Maximum="180"
+            ScaleWidth="26"
+            Unit="RPM"
+            TickBrush="Gainsboro"
+            ScaleTickBrush="{ThemeResource BackButtonForegroundThemeBrush}"
+            UnitBrush="Black"
+            ValueBrush="Black" 
+            Height="150"  
+            Width="150"
+            Margin="211,61,407,221"
+                        />
+        <controls:Gauge x:Name="RadialGaugeControl_Copy1"
+            Value="0"
+            Minimum="0"
+            Maximum="180"
+            ScaleWidth="26"
+            Unit="KM/h"
+            TickBrush="Gainsboro"
+            ScaleTickBrush="{ThemeResource BackButtonForegroundThemeBrush}"
+            UnitBrush="Black"
+            ValueBrush="Black" 
+            Height="150"  
+            Width="150"
+            Margin="377,61,241,221"
+                        />
+        <TextBox Name="TxtTeste" HorizontalAlignment="Left" Margin="590,83,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top"/>
+        <Button Name="BtnStart"  Content="Start" HorizontalAlignment="Left" Margin="590,189,0,0" VerticalAlignment="Top" Click="BtnStart_Click"/>
     </Grid>
 </Page>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.Rfcomm;
 using Windows.Devices.Enumeration;
 using Windows.Networking.Sockets;
@@ -16,44 +17,76 @@ namespace TCC
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private DeviceInformationCollection _deviceCollection;
-        private DeviceInformation _selectedDevice;
-        private RfcommDeviceService _deviceService;
-        //CoreDispatcher _dispatcher = Window.Current.Dispatcher;
-        public string _deviceName = "danielvv";
+        //private DeviceInformationCollection _deviceCollection;
+        //private DeviceInformation _selectedDevice;
+        //private RfcommDeviceService _deviceService;
+        ////CoreDispatcher _dispatcher = Window.Current.Dispatcher;
+        //public string _deviceName = "danielvv";
 
-        private StreamSocket _streamSocket;
+        //private StreamSocket _streamSocket;
 
         DataReader _reader;
         DataWriter _writer;
 
+        DispatcherTimer _dispatcherTimer;
+        private readonly ObdProvider _obdProvider;
 
         public MainPage()
         {
             this.InitializeComponent();
+            //DispatcherTimerSetup();
+
+            _obdProvider = new ObdProvider("danielvv");
         }
-
-        DispatcherTimer dispatcherTimer;
-       
-        int timesTicked = 1;
-        int timesToTick = 10;
-
 
         public void DispatcherTimerSetup()
         {
-            dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += dispatcherTimer_Tick;
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-            dispatcherTimer.Start();
+            _dispatcherTimer = new DispatcherTimer();
+            _dispatcherTimer.Tick += dispatcherTimer_Tick;
+            _dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+            _dispatcherTimer.Start();
         }
 
         private int x = 1;
         void dispatcherTimer_Tick(object sender, object e)
         {
             x++;
-
+            TxtTeste.Text = x.ToString();
         }
 
+        //private async Task ConfigureConnectionToElmAdapter()
+        //{
+        //    var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
+        //    _deviceCollection = await DeviceInformation.FindAllAsync(device);
+            
+        //    _selectedDevice = _deviceCollection[0];
+        //    _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
 
+        //    if (_deviceService == null)
+        //    {
+        //        throw new Exception("Não foi possível se conectar no dispositivo");
+        //    }
+
+        //    await _streamSocket.ConnectAsync(_deviceService.ConnectionHostName,
+        //        _deviceService.ConnectionServiceName);
+
+        //    TxtTeste.Text = "Conexão estabelecida!";
+
+        //    DispatcherTimerSetup();
+        //}
+
+        private void SetupStreams()
+        {
+            _reader = new DataReader(_obdProvider.StreamSocket.InputStream)
+            {
+                InputStreamOptions = InputStreamOptions.Partial
+            };
+            _writer = new DataWriter(_obdProvider.StreamSocket.OutputStream);
+        }
+
+        private async void BtnStart_Click(object sender, RoutedEventArgs e)
+        {
+            await _obdProvider.ConfigureConnectionToElmAdapter();
+        }
     }
 }
