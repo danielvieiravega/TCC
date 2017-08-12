@@ -1,29 +1,33 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth.Rfcomm;
+using Windows.Devices.Enumeration;
+using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-// O modelo de item de Página em Branco está documentado em https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x416
 namespace TCC
 {
-    /// <summary>
-    /// Uma página vazia que pode ser usada isoladamente ou navegada dentro de um Quadro.
-    /// </summary>
     public sealed partial class MainPage : Page
     {
         private DataReader _reader;
         private DataWriter _writer;
-        readonly CoreDispatcher _dispatcher = Window.Current.Dispatcher;
+        private readonly CoreDispatcher _dispatcher = Window.Current.Dispatcher;
         private DispatcherTimer _dispatcherTimer;
-        private readonly ObdProvider _obdProvider;
+        //private readonly ObdProvider _obdProvider;
+
+        private DeviceInformationCollection _deviceCollection;
+        private DeviceInformation _selectedDevice;
+        private RfcommDeviceService _deviceService;
+        private readonly StreamSocket _streamSocket = new StreamSocket();
 
         public MainPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            _obdProvider = new ObdProvider("danielvv");
+            //_obdProvider = new ObdProvider("danielvv");
         }
 
         public void DispatcherTimerSetup()
@@ -36,35 +40,108 @@ namespace TCC
 
         private void DispatcherTimer_Tick(object sender, object e)
         {
-            GetSpeed();
-            GetRpm();
-        }
-        
-        private void SetupStreams()
-        {
-            _reader = new DataReader(_obdProvider.StreamSocket.InputStream)
+            try
             {
-                InputStreamOptions = InputStreamOptions.Partial
-            };
-
-            _writer = new DataWriter(_obdProvider.StreamSocket.OutputStream);
+                GetSpeed();
+                GetRpm();
+            }
+            catch (Exception exception)
+            {
+                TxtTeste.Text = exception.Message;
+            }
+            
         }
+
+        public async Task ConfigureConnectionToElmAdapter()
+        {
+            var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
+            _deviceCollection = await DeviceInformation.FindAllAsync(device);
+
+            if (_deviceCollection.Count > 0)
+            {
+                _selectedDevice = _deviceCollection[0];
+                _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
+
+                if (_deviceService == null)
+                {
+                    throw new Exception("Não foi possível se conectar no dispositivo");
+                }
+
+                await _streamSocket.ConnectAsync(_deviceService.ConnectionHostName,
+                    _deviceService.ConnectionServiceName);
+
+                _reader = new DataReader(_streamSocket.InputStream) {InputStreamOptions = InputStreamOptions.Partial};
+                _writer = new DataWriter(_streamSocket.OutputStream);
+
+                try
+                {
+                    await SendInitializationCommands();
+                }
+                catch (Exception e)
+                {
+                    TxtTeste.Text = e.Message;
+                }
+                
+
+                DispatcherTimerSetup();
+
+                await LogStatus("Conexão efetuada com sucesso!");
+            }
+        }
+
+        //private void SetupStreams()
+        //{
+        //    _reader = new DataReader(_streamSocket.InputStream)
+        //    {
+        //        InputStreamOptions = InputStreamOptions.Partial
+        //    };
+
+        //    _writer = new DataWriter(_streamSocket.OutputStream);
+        //}
 
         /// <summary>
         /// Initializes the communication with the ELM327
         /// </summary>
         private async Task SendInitializationCommands()
         {
-            SetupStreams();
+            await LogStatus("Streams Setup!");
+            await LogStatus("Sending Commands!");
+            await AddCommandLog("ATZ\r");
+            var res = await SendCommand("ATZ\r");
+            await AddCommandLog(res, true);
 
-            await SendCommand("ATZ\r");
-            await SendCommand("ATSP6\r");
-            await SendCommand("ATH0\r");
-            await SendCommand("ATCAF1\r");
+            await AddCommandLog("ATSP6\r");
+            res = await SendCommand("ATSP6\r");
+            await AddCommandLog(res, true);
+
+            await AddCommandLog("ATH0\r");
+            res = await SendCommand("ATH0\r");
+            await AddCommandLog(res, true);
+
+            await AddCommandLog("ATCAF1\r");
+            res = await SendCommand("ATCAF1\r");
+            await AddCommandLog(res, true);
+        }
+
+        private async Task AddCommandLog(string value, bool isResponse = false)
+        {
+            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                TxtTeste.Text = string.Format("{0}: {1}", isResponse ? "Response" : "Request", value);
+            });
+        }
+
+        private async Task LogStatus(string status)
+        {
+            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                TxtStatus.Text = string.Format("Status: {0}", status);
+            });
         }
 
         private async Task<string> SendCommand(string command)
         {
+            await LogStatus(string.Format("Sending Command - {0}", command));
             _writer.WriteString(command);
             await _writer.StoreAsync();
             await _writer.FlushAsync();
@@ -74,14 +151,35 @@ namespace TCC
 
         private async void GetSpeed()
         {
-            var response = await SendCommand("010D\r");
-            await DecodeAndShowSpeed(response);
+            try
+            {
+                await AddCommandLog("010D\r");
+                var response = await SendCommand("010D\r");
+                await AddCommandLog(response, true);
+                await DecodeAndShowSpeed(response);
+                await LogStatus("Ready for command");
+            }
+            catch (Exception e)
+            {
+                TxtTeste.Text = e.Message;
+            }
         }
 
         private async void GetRpm()
         {
-            var response = await SendCommand("010C\r");
-            await DecodeAndShowRpm(response);
+            try
+            {
+                await AddCommandLog("010C\r");
+                var response = await SendCommand("010C\r");
+                await AddCommandLog(response, true);
+                await DecodeAndShowRpm(response);
+                await LogStatus("Ready for command");
+            }
+            catch (Exception e)
+            {
+                TxtTeste.Text = e.Message;
+            }
+            
         }
 
         private async Task DecodeAndShowSpeed(string response)
@@ -96,12 +194,20 @@ namespace TCC
 
         private async Task DecodeAndShowRpm(string response)
         {
-            var rpmString = response.Substring(4);
-            var rpm = (Convert.ToDouble(DecodeHexNumber(response.Substring(4))));
-            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            try
             {
-                GaugeRpm.Value = rpm;
-            });
+                var rpmInHex = DecodeHexNumber(response.Substring(4));
+                var rpm = Convert.ToDouble(rpmInHex);
+                await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    GaugeRpm.Value = rpm;
+                });
+            }
+            catch (Exception e)
+            {
+                TxtTeste.Text = e.Message;
+            }
+            
         }
 
         private static int DecodeHexNumber(string hexString)
@@ -118,9 +224,21 @@ namespace TCC
 
         private async void BtnStart_Click(object sender, RoutedEventArgs e)
         {
-            await _obdProvider.ConfigureConnectionToElmAdapter();
-            await SendInitializationCommands();
-            DispatcherTimerSetup();
+            try
+            {
+                await ConfigureConnectionToElmAdapter();
+                
+            }
+            catch (Exception exception)
+            {
+                TxtTeste.Text = exception.Message;
+            }
+        }
+
+        ~MainPage()
+        {
+            _streamSocket.OutputStream.FlushAsync().GetResults();
+            _streamSocket.Dispose();
         }
     }
 }

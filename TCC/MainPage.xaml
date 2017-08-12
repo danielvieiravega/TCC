@@ -12,7 +12,7 @@
         <controls:Gauge x:Name="GaugeSpeed"
                               Value="0"
                               Minimum="0"
-                              Maximum="180"
+                              Maximum="200"
                               ScaleWidth="26"
                               Unit="KM/h"
                               TickBrush="Gainsboro"
@@ -27,7 +27,7 @@
         <controls:Gauge x:Name="GaugeRpm"
             Value="0"
             Minimum="0"
-            Maximum="180"
+            Maximum="1500"
             ScaleWidth="26"
             Unit="RPM"
             TickBrush="Gainsboro"
@@ -52,7 +52,8 @@
             Width="100"
             Margin="377,61,241,221"
                         />
-        <TextBox Name="TxtTeste" HorizontalAlignment="Left" Margin="532,61,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="176" Height="38"/>
-        <Button Name="BtnStart"  Content="Start" HorizontalAlignment="Left" Margin="590,189,0,0" VerticalAlignment="Top" Click="BtnStart_Click"/>
+        <TextBox Name="TxtTeste" HorizontalAlignment="Left" Margin="358,11,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="400" Height="110"/>
+        <Button Name="BtnStart"  Content="Start" HorizontalAlignment="Left" Margin="682,271,0,0" VerticalAlignment="Top" Click="BtnStart_Click"/>
+        <TextBox x:Name="TxtStatus" HorizontalAlignment="Left" Margin="358,131,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="400" Height="110"/>
     </Grid>
 </Page>

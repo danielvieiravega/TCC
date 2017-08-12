@@ -20,6 +20,7 @@ namespace TCC
         public  ObdProvider(string deviceName)
         {
             DeviceName = deviceName;
+            StreamSocket = new StreamSocket();
         }
 
         public async Task ConfigureConnectionToElmAdapter()
@@ -27,19 +28,21 @@ namespace TCC
             var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
             _deviceCollection = await DeviceInformation.FindAllAsync(device);
 
-            _selectedDevice = _deviceCollection[0];
-            _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
-
-            if (_deviceService == null)
+            if (_deviceCollection.Count > 0)
             {
-                throw new Exception("Não foi possível se conectar no dispositivo");
+                _selectedDevice = _deviceCollection[0];
+                _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
+
+                if (_deviceService == null)
+                {
+                    throw new Exception("Não foi possível se conectar no dispositivo");
+                }
+                
+                await StreamSocket.ConnectAsync(_deviceService.ConnectionHostName,
+                    _deviceService.ConnectionServiceName);
+
+                var xuxu = "";
             }
-
-            await StreamSocket.ConnectAsync(_deviceService.ConnectionHostName,
-                _deviceService.ConnectionServiceName);
-
-            var sss = "";
-
         }
 
       }
