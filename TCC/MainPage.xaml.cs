@@ -49,7 +49,7 @@ namespace TCC
             {
                 TxtTeste.Text = exception.Message;
             }
-            
+     
         }
 
         public async Task ConfigureConnectionToElmAdapter()
@@ -88,17 +88,7 @@ namespace TCC
                 await LogStatus("Conexão efetuada com sucesso!");
             }
         }
-
-        //private void SetupStreams()
-        //{
-        //    _reader = new DataReader(_streamSocket.InputStream)
-        //    {
-        //        InputStreamOptions = InputStreamOptions.Partial
-        //    };
-
-        //    _writer = new DataWriter(_streamSocket.OutputStream);
-        //}
-
+        
         /// <summary>
         /// Initializes the communication with the ELM327
         /// </summary>
@@ -196,11 +186,20 @@ namespace TCC
         {
             try
             {
-                var rpmInHex = DecodeHexNumber(response.Substring(4));
-                var rpm = Convert.ToDouble(rpmInHex);
+                var rpmInHex = response.Substring(4);
+
+                var rpmA = rpmInHex.Substring(0, 2);
+                var rpmB = rpmInHex.Substring(2);
+
+                var rpmAInt = DecodeHexNumber(rpmA);
+                var rpmBInt = DecodeHexNumber(rpmB);
+                
+                var rpm = ((256 * rpmAInt) + rpmBInt )/4;
+
+                var rpmDouble = Convert.ToDouble(rpm);
                 await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    GaugeRpm.Value = rpm;
+                    GaugeRpm.Value = rpmDouble;
                 });
             }
             catch (Exception e)
@@ -237,8 +236,38 @@ namespace TCC
 
         ~MainPage()
         {
-            _streamSocket.OutputStream.FlushAsync().GetResults();
+            //_streamSocket.OutputStream.FlushAsync().GetResults();
             _streamSocket.Dispose();
         }
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        {
+            _streamSocket.Dispose();
+        }
+
+
+        /// <summary>
+        /// List of supported PIDs
+        /// <see cref="http://en.wikipedia.org/wiki/OBD-II_PIDs"/>
+        /// </summary>
+        public enum PID
+        {
+            RPM = 0x0C,
+            Speed = 0x0D,
+            EngineTemperature = 0x05,
+        };
+
+        /// <summary>
+        /// List of supported modes
+        /// <see cref="https://www.elmelectronics.com/wp-content/uploads/2016/07/ELM327DS.pdf"/>
+        /// </summary>
+        public enum Mode
+        {
+            CurrentData = 0x01, //Show current data
+            FreezeFrameData = 0x02, //Show freeze frame data
+            DiagnosticTroubleCodes = 0x03 //show diagnostic trouble codes
+        }
+
+        //	Console.WriteLine(Convert.ToUInt32(Mode.CurrentData).ToString("X2") + Convert.ToUInt32(PID.Speed).ToString("X2") + "\r");
     }
 }

@@ -55,5 +55,6 @@
         <TextBox Name="TxtTeste" HorizontalAlignment="Left" Margin="358,11,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="400" Height="110"/>
         <Button Name="BtnStart"  Content="Start" HorizontalAlignment="Left" Margin="682,271,0,0" VerticalAlignment="Top" Click="BtnStart_Click"/>
         <TextBox x:Name="TxtStatus" HorizontalAlignment="Left" Margin="358,131,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="400" Height="110"/>
+        <Button x:Name="BtnClose"  Content="Close" HorizontalAlignment="Left" Margin="682,321,0,0" VerticalAlignment="Top" Click="BtnClose_Click"/>
     </Grid>
 </Page>
