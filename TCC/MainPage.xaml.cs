@@ -21,7 +21,7 @@ namespace TCC
         private DeviceInformationCollection _deviceCollection;
         private DeviceInformation _selectedDevice;
         private RfcommDeviceService _deviceService;
-        private readonly StreamSocket _streamSocket = new StreamSocket();
+        private StreamSocket _streamSocket;
 
         public MainPage()
         {
@@ -67,6 +67,8 @@ namespace TCC
                     throw new Exception("Não foi possível se conectar no dispositivo");
                 }
 
+                _streamSocket = new StreamSocket();
+
                 await _streamSocket.ConnectAsync(_deviceService.ConnectionHostName,
                     _deviceService.ConnectionServiceName);
 
@@ -79,13 +81,16 @@ namespace TCC
                 }
                 catch (Exception e)
                 {
-                    TxtTeste.Text = e.Message;
+                    await LogStatus(e.Message);
                 }
                 
-
                 DispatcherTimerSetup();
 
                 await LogStatus("Conexão efetuada com sucesso!");
+            }
+            else
+            {
+                await LogStatus("Nenhum dispositivo encontrado!");
             }
         }
         
@@ -186,21 +191,36 @@ namespace TCC
         {
             try
             {
-                var rpmInHex = response.Substring(4);
+                var rpmString = response.Substring(4);
+                var rpm = (Convert.ToDouble(DecodeHexNumber(response.Substring(4))));
 
-                var rpmA = rpmInHex.Substring(0, 2);
-                var rpmB = rpmInHex.Substring(2);
-
-                var rpmAInt = DecodeHexNumber(rpmA);
-                var rpmBInt = DecodeHexNumber(rpmB);
-                
-                var rpm = ((256 * rpmAInt) + rpmBInt )/4;
-
-                var rpmDouble = Convert.ToDouble(rpm);
                 await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    GaugeRpm.Value = rpmDouble;
+                    GaugeRpm.Value = rpm;
                 });
+
+                if (response.Length > 6)
+                {
+                    response = response.Replace("\r", "");
+                    var rpmInHex = response.Substring(4);
+
+                    var rpmA = rpmInHex.Substring(0, 2);
+                    var rpmB = rpmInHex.Substring(2);
+
+                    var rpmAInt = DecodeHexNumber(rpmA);
+                    var rpmBInt = DecodeHexNumber(rpmB);
+
+                    int valueA = Convert.ToInt32(rpmA, 16);
+                    int valueB = Convert.ToInt32(rpmB, 16);
+
+                    var rpm1 = ((256 * rpmAInt) + rpmBInt) / 4;
+
+                    var rpmDouble = Convert.ToDouble(rpm1);
+                    await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        GaugeRpm.Value = rpmDouble;
+                    });
+                }
             }
             catch (Exception e)
             {
@@ -246,27 +266,7 @@ namespace TCC
         }
 
 
-        /// <summary>
-        /// List of supported PIDs
-        /// <see cref="http://en.wikipedia.org/wiki/OBD-II_PIDs"/>
-        /// </summary>
-        public enum PID
-        {
-            RPM = 0x0C,
-            Speed = 0x0D,
-            EngineTemperature = 0x05,
-        };
-
-        /// <summary>
-        /// List of supported modes
-        /// <see cref="https://www.elmelectronics.com/wp-content/uploads/2016/07/ELM327DS.pdf"/>
-        /// </summary>
-        public enum Mode
-        {
-            CurrentData = 0x01, //Show current data
-            FreezeFrameData = 0x02, //Show freeze frame data
-            DiagnosticTroubleCodes = 0x03 //show diagnostic trouble codes
-        }
+       
 
         //	Console.WriteLine(Convert.ToUInt32(Mode.CurrentData).ToString("X2") + Convert.ToUInt32(PID.Speed).ToString("X2") + "\r");
     }
