@@ -135,9 +135,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TCC.ODBDriver\TCC.ODBDriver.csproj">
+    <ProjectReference Include="..\TCC.ODBDriver\ODBDriver.csproj">
       <Project>{c0d18f05-d1c9-463a-90bb-4955b8c00055}</Project>
-      <Name>TCC.ODBDriver</Name>
+      <Name>ODBDriver</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

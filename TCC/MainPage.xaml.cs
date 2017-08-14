@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Rfcomm;
 using Windows.Devices.Enumeration;
 using Windows.Networking.Sockets;
@@ -23,8 +25,11 @@ namespace TCC
         private RfcommDeviceService _deviceService;
         private StreamSocket _streamSocket;
 
+        public bool IsClosed { get; set; }
+
         public MainPage()
         {
+            IsClosed = true;
             InitializeComponent();
 
             //_obdProvider = new ObdProvider("danielvv");
@@ -40,16 +45,22 @@ namespace TCC
 
         private void DispatcherTimer_Tick(object sender, object e)
         {
-            try
+            if (!IsClosed)
             {
-                GetSpeed();
-                GetRpm();
+                try
+                {
+                    GetSpeed();
+                    GetRpm();
+                }
+                catch (Exception exception)
+                {
+                    TxtTeste.Text = exception.Message;
+                }
             }
-            catch (Exception exception)
+            else
             {
-                TxtTeste.Text = exception.Message;
+                _dispatcherTimer.Stop();
             }
-     
         }
 
         public async Task ConfigureConnectionToElmAdapter()
@@ -59,7 +70,7 @@ namespace TCC
 
             if (_deviceCollection.Count > 0)
             {
-                _selectedDevice = _deviceCollection[0];
+                _selectedDevice = _deviceCollection.Single(x => x.Name == "danielvv");
                 _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
 
                 if (_deviceService == null)
@@ -77,13 +88,15 @@ namespace TCC
 
                 try
                 {
-                    await SendInitializationCommands();
+                    SendInitializationCommands();
                 }
                 catch (Exception e)
                 {
                     await LogStatus(e.Message);
                 }
-                
+
+                IsClosed = false;
+
                 DispatcherTimerSetup();
 
                 await LogStatus("Conexão efetuada com sucesso!");
@@ -97,25 +110,25 @@ namespace TCC
         /// <summary>
         /// Initializes the communication with the ELM327
         /// </summary>
-        private async Task SendInitializationCommands()
+        private void SendInitializationCommands()
         {
-            await LogStatus("Streams Setup!");
-            await LogStatus("Sending Commands!");
-            await AddCommandLog("ATZ\r");
-            var res = await SendCommand("ATZ\r");
-            await AddCommandLog(res, true);
+            //await LogStatus("Streams Setup!");
+            //await LogStatus("Sending Commands!");
+            //await AddCommandLog("ATZ\r");
+            SendCommand("ATZ\r").Wait();
+            //await AddCommandLog(res, true);
 
-            await AddCommandLog("ATSP6\r");
-            res = await SendCommand("ATSP6\r");
-            await AddCommandLog(res, true);
+           // await AddCommandLog("ATSP6\r");
+            SendCommand("ATSP6\r").Wait();
+            // await AddCommandLog(res, true);
 
-            await AddCommandLog("ATH0\r");
-            res = await SendCommand("ATH0\r");
-            await AddCommandLog(res, true);
+            // await AddCommandLog("ATH0\r");
+            SendCommand("ATH0\r").Wait();
+           // await AddCommandLog(res, true);
 
-            await AddCommandLog("ATCAF1\r");
-            res = await SendCommand("ATCAF1\r");
-            await AddCommandLog(res, true);
+           // await AddCommandLog("ATCAF1\r");
+            SendCommand("ATCAF1\r").Wait();
+          //  await AddCommandLog(res, true);
         }
 
         private async Task AddCommandLog(string value, bool isResponse = false)
@@ -136,23 +149,48 @@ namespace TCC
 
         private async Task<string> SendCommand(string command)
         {
-            await LogStatus(string.Format("Sending Command - {0}", command));
-            _writer.WriteString(command);
-            await _writer.StoreAsync();
-            await _writer.FlushAsync();
-            var count = await _reader.LoadAsync(512);
-            return _reader.ReadString(count).Trim('>');
+            var result = "Failure sending command!";
+            try
+            {
+                await LogStatus(string.Format("Sending Command - {0}", command));
+                _writer.WriteString(command);
+                await _writer.StoreAsync();
+                await _writer.FlushAsync();
+                var count = await _reader.LoadAsync(512);
+                result = _reader.ReadString(count).Trim('>');
+            }
+            catch (Exception e)
+            {
+                TxtTeste.Text = e.Message;
+            }
+
+            return result;
+        }
+
+        private static string NormalizeResponse(string res)
+        {
+            return res.Replace("\r", "");
+        }
+
+        private static bool HasValidLength(string res)
+        {
+            return res.Length < 10;
         }
 
         private async void GetSpeed()
         {
             try
             {
-                await AddCommandLog("010D\r");
+                //await AddCommandLog("010D\r");
                 var response = await SendCommand("010D\r");
-                await AddCommandLog(response, true);
-                await DecodeAndShowSpeed(response);
-                await LogStatus("Ready for command");
+                //await AddCommandLog(response, true);
+                if (HasValidLength(response))
+                {
+                    response = NormalizeResponse(response);
+                    if (response.Contains("410D"))
+                        await DecodeAndShowSpeed(response);
+                }
+                //await LogStatus("Ready for command");
             }
             catch (Exception e)
             {
@@ -164,11 +202,16 @@ namespace TCC
         {
             try
             {
-                await AddCommandLog("010C\r");
+                //await AddCommandLog("010C\r");
                 var response = await SendCommand("010C\r");
-                await AddCommandLog(response, true);
-                await DecodeAndShowRpm(response);
-                await LogStatus("Ready for command");
+                //await AddCommandLog(response, true);
+                if (HasValidLength(response))
+                {
+                    response = NormalizeResponse(response);
+                    if (response.Contains("410C"))
+                        await DecodeAndShowRpm(response);
+                }
+                //await LogStatus("Ready for command");
             }
             catch (Exception e)
             {
@@ -191,27 +234,27 @@ namespace TCC
         {
             try
             {
-                var rpmString = response.Substring(4);
-                var rpm = (Convert.ToDouble(DecodeHexNumber(response.Substring(4))));
+                //var rpmString = response.Substring(4);
+                //var rpm = (Convert.ToDouble(DecodeHexNumber(response.Substring(4))));
 
-                await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    GaugeRpm.Value = rpm;
-                });
+                //await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                //{
+                //    GaugeRpm.Value = rpm;
+                //});
 
-                if (response.Length > 6)
-                {
+                //if (response.Length > 6)
+                //{
                     response = response.Replace("\r", "");
                     var rpmInHex = response.Substring(4);
 
                     var rpmA = rpmInHex.Substring(0, 2);
                     var rpmB = rpmInHex.Substring(2);
 
-                    var rpmAInt = DecodeHexNumber(rpmA);
-                    var rpmBInt = DecodeHexNumber(rpmB);
+                    //var rpmAInt = DecodeHexNumber(rpmA);
+                    //var rpmBInt = DecodeHexNumber(rpmB);
 
-                    int valueA = Convert.ToInt32(rpmA, 16);
-                    int valueB = Convert.ToInt32(rpmB, 16);
+                    var rpmAInt = Convert.ToInt32(rpmA, 16);
+                    var rpmBInt = Convert.ToInt32(rpmB, 16);
 
                     var rpm1 = ((256 * rpmAInt) + rpmBInt) / 4;
 
@@ -220,7 +263,7 @@ namespace TCC
                     {
                         GaugeRpm.Value = rpmDouble;
                     });
-                }
+                //}
             }
             catch (Exception e)
             {
@@ -258,11 +301,19 @@ namespace TCC
         {
             //_streamSocket.OutputStream.FlushAsync().GetResults();
             _streamSocket.Dispose();
+            _streamSocket = null;
+            _deviceService.Dispose();
+            _deviceService = null;
         }
 
-        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        private async void BtnClose_Click(object sender, RoutedEventArgs e)
         {
+            await _streamSocket.CancelIOAsync();
             _streamSocket.Dispose();
+            _streamSocket = null;
+            _deviceService.Dispose();
+            _deviceService = null;
+            IsClosed = true;
         }
 
 

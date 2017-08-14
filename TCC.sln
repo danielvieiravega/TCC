@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCC", "TCC\TCC.csproj", "{285D04BB-C677-4D0B-AE4A-DFF3BC848E48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCC.ODBDriver", "TCC.ODBDriver\TCC.ODBDriver.csproj", "{C0D18F05-D1C9-463A-90BB-4955B8C00055}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODBDriver", "TCC.ODBDriver\ODBDriver.csproj", "{C0D18F05-D1C9-463A-90BB-4955B8C00055}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
