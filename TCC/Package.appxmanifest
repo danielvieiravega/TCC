@@ -27,8 +27,8 @@
     <Capability Name="privateNetworkClientServer" />
     <uap3:Capability Name="userNotificationListener" />
     <uap:Capability Name="removableStorage" />
-    <DeviceCapability Name="bluetooth" />
     <DeviceCapability Name="location" />
+    <DeviceCapability Name="bluetooth" />
     <DeviceCapability Name="bluetooth.rfcomm">
       <Device Id="any">
         <Function Type="name:serialPort" />

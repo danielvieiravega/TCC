@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Rfcomm;
 using Windows.Devices.Enumeration;
+using Windows.Foundation;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
@@ -25,7 +27,16 @@ namespace TCC
         private RfcommDeviceService _deviceService;
         private StreamSocket _streamSocket;
 
+        private DeviceWatcher deviceWatcher = null;
+        private TypedEventHandler<DeviceWatcher, DeviceInformation> handlerAdded = null;
+        private TypedEventHandler<DeviceWatcher, DeviceInformationUpdate> handlerUpdated = null;
+        private TypedEventHandler<DeviceWatcher, DeviceInformationUpdate> handlerRemoved = null;
+        private TypedEventHandler<DeviceWatcher, Object> handlerEnumCompleted = null;
+        private TypedEventHandler<DeviceWatcher, Object> handlerStopped = null;
+        
         public bool IsClosed { get; set; }
+
+        private List<DeviceInformation> _devices = new List<DeviceInformation>();
 
         public MainPage()
         {
@@ -65,11 +76,17 @@ namespace TCC
 
         public async Task ConfigureConnectionToElmAdapter()
         {
+            //var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
             var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
             _deviceCollection = await DeviceInformation.FindAllAsync(device);
-
+                
             if (_deviceCollection.Count > 0)
             {
+                foreach (var Vxx in _deviceCollection)
+                {
+                    var uu = Vxx;
+                }
+
                 _selectedDevice = _deviceCollection.Single(x => x.Name == "danielvv");
                 _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
 
@@ -223,7 +240,7 @@ namespace TCC
         private async Task DecodeAndShowSpeed(string response)
         {
             var speedHexString = response.Substring(4);
-            var speed = DecodeHexNumber(speedHexString);
+            var speed = Convert.ToInt32(speedHexString, 16);
             await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 GaugeSpeed.Value = speed;
@@ -234,36 +251,22 @@ namespace TCC
         {
             try
             {
-                //var rpmString = response.Substring(4);
-                //var rpm = (Convert.ToDouble(DecodeHexNumber(response.Substring(4))));
+                response = response.Replace("\r", "");
+                var rpmInHex = response.Substring(4);
 
-                //await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                //{
-                //    GaugeRpm.Value = rpm;
-                //});
+                var rpmA = rpmInHex.Substring(0, 2);
+                var rpmB = rpmInHex.Substring(2);
+                
+                var rpmAInt = Convert.ToInt32(rpmA, 16);
+                var rpmBInt = Convert.ToInt32(rpmB, 16);
 
-                //if (response.Length > 6)
-                //{
-                    response = response.Replace("\r", "");
-                    var rpmInHex = response.Substring(4);
+                var rpm1 = ((256 * rpmAInt) + rpmBInt) / 4;
 
-                    var rpmA = rpmInHex.Substring(0, 2);
-                    var rpmB = rpmInHex.Substring(2);
-
-                    //var rpmAInt = DecodeHexNumber(rpmA);
-                    //var rpmBInt = DecodeHexNumber(rpmB);
-
-                    var rpmAInt = Convert.ToInt32(rpmA, 16);
-                    var rpmBInt = Convert.ToInt32(rpmB, 16);
-
-                    var rpm1 = ((256 * rpmAInt) + rpmBInt) / 4;
-
-                    var rpmDouble = Convert.ToDouble(rpm1);
-                    await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        GaugeRpm.Value = rpmDouble;
-                    });
-                //}
+                var rpmDouble = Convert.ToDouble(rpm1);
+                await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    GaugeRpm.Value = rpmDouble;
+                });
             }
             catch (Exception e)
             {
@@ -271,19 +274,7 @@ namespace TCC
             }
             
         }
-
-        private static int DecodeHexNumber(string hexString)
-        {
-            var raw = new byte[hexString.Length / 2];
-
-            for (var i = 0; i < raw.Length; i++)
-            {
-                raw[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
-            }
-
-            return Convert.ToInt32(raw[0].ToString());
-        }
-
+        
         private async void BtnStart_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -316,9 +307,68 @@ namespace TCC
             IsClosed = true;
         }
 
+        private void BtnStartEnumeration_Click(object sender, RoutedEventArgs e)
+        {
+            deviceWatcher = DeviceInformation.CreateWatcher(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
 
-       
+            handlerAdded = new TypedEventHandler<DeviceWatcher, DeviceInformation>(async (watcher, deviceInfo) =>
+            {
+                // Since we have the collection databound to a UI element, we need to update the collection on the UI thread.
+                await _dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    TxtStatus.Text = "handlerAdded";
+                    //_selectedDevice = deviceInfo;
+                    _devices.Add(deviceInfo);
+                });
+            });
+            deviceWatcher.Added += handlerAdded;
 
+            handlerUpdated = new TypedEventHandler<DeviceWatcher, DeviceInformationUpdate>(async (watcher, deviceInfoUpdate) =>
+            {
+                // Since we have the collection databound to a UI element, we need to update the collection on the UI thread.
+                await _dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    // Find the corresponding updated DeviceInformation in the collection and pass the update object
+                    // to the Update method of the existing DeviceInformation. This automatically updates the object
+                    // for us.
+                    TxtStatus.Text = "handlerUpdate";
+                });
+            });
+            deviceWatcher.Updated += handlerUpdated;
+
+            handlerRemoved = new TypedEventHandler<DeviceWatcher, DeviceInformationUpdate>(async (watcher, deviceInfoUpdate) =>
+            {
+                // Since we have the collection databound to a UI element, we need to update the collection on the UI thread.
+                await _dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    TxtStatus.Text = "handlerRemoved";
+                });
+            });
+            deviceWatcher.Removed += handlerRemoved;
+
+            handlerEnumCompleted = new TypedEventHandler<DeviceWatcher, Object>(async (watcher, obj) =>
+            {
+                await _dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    TxtStatus.Text = "handlerEnumCompleted";
+                });
+            });
+            deviceWatcher.EnumerationCompleted += handlerEnumCompleted;
+
+            handlerStopped = new TypedEventHandler<DeviceWatcher, object>(async (watcher, obj) =>
+            {
+                await _dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    TxtStatus.Text = "handlerStopped";
+                });
+            });
+
+            deviceWatcher.Stopped += handlerStopped;
+
+            deviceWatcher.Start();
+        }
+
+        
         //	Console.WriteLine(Convert.ToUInt32(Mode.CurrentData).ToString("X2") + Convert.ToUInt32(PID.Speed).ToString("X2") + "\r");
     }
 }
