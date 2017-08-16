@@ -43,6 +43,7 @@ namespace TCC
             IsClosed = true;
             InitializeComponent();
 
+
             //_obdProvider = new ObdProvider("danielvv");
         }
 
@@ -62,6 +63,7 @@ namespace TCC
                 {
                     GetSpeed();
                     GetRpm();
+                    GetEngineTemperature();
                 }
                 catch (Exception exception)
                 {
@@ -76,10 +78,8 @@ namespace TCC
 
         public async Task ConfigureConnectionToElmAdapter()
         {
-            //var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
-            var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
-            _deviceCollection = await DeviceInformation.FindAllAsync(device);
-                
+            _deviceCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
+            
             if (_deviceCollection.Count > 0)
             {
                 foreach (var Vxx in _deviceCollection)
@@ -234,9 +234,51 @@ namespace TCC
             {
                 TxtTeste.Text = e.Message;
             }
-            
         }
 
+        private async void GetEngineTemperature()
+        {
+            try
+            {
+                //await AddCommandLog("010C\r");
+                var response = await SendCommand("0105\r");
+                //await AddCommandLog(response, true);
+                if (HasValidLength(response))
+                {
+                    response = NormalizeResponse(response);
+                    if (response.Contains("4105"))
+                    {
+                        var temperature = ParseHexData(response) - 40;
+                        await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            TxtTemperature.Text = temperature.ToString();
+                        });
+                    }
+                }
+                //await LogStatus("Ready for command");
+            }
+            catch (Exception e)
+            {
+                TxtTeste.Text = e.Message;
+            }
+        }
+
+        private int ParseHexData(string data)
+        {
+            var result = 0;
+            var hexValue = data.Substring(4);
+            try
+            {
+                result = Convert.ToInt32(hexValue, 16);
+            }
+            catch (Exception e)
+            {
+                TxtTeste.Text = e.Message;
+            }
+
+            return result;
+        }
+        
         private async Task DecodeAndShowSpeed(string response)
         {
             var speedHexString = response.Substring(4);

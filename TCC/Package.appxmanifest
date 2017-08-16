@@ -23,16 +23,10 @@
     </Application>
   </Applications>
   <Capabilities>
-    <Capability Name="internetClient" />
-    <Capability Name="privateNetworkClientServer" />
-    <uap3:Capability Name="userNotificationListener" />
-    <uap:Capability Name="removableStorage" />
-    <DeviceCapability Name="location" />
-    <DeviceCapability Name="bluetooth" />
     <DeviceCapability Name="bluetooth.rfcomm">
-      <Device Id="any">
-        <Function Type="name:serialPort" />
-      </Device>
-    </DeviceCapability>
+         <Device Id="any">
+             <Function Type="name:serialPort"/>
+         </Device>
+      </DeviceCapability>
   </Capabilities>
 </Package>
