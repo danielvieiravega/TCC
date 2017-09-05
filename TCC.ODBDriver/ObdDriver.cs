@@ -87,11 +87,9 @@ namespace TCC.ODBDriver
             var result = "Failure sending command!";
             try
             {
-                //await LogStatus(string.Format("Sending Command - {0}", command));
                 _writer.WriteString(command);
                 await _writer.StoreAsync();
                 await _writer.FlushAsync();
-                //var count = await _reader.LoadAsync(512);
 
                 IAsyncOperation<uint> count = _reader.LoadAsync(512);
                 count.AsTask().Wait();
@@ -198,6 +196,20 @@ namespace TCC.ODBDriver
         {
             return res.Length < 10;
         }
+
+        public async Task Close()
+        {
+            if (_streamSocket != null)
+            {
+                await _streamSocket.CancelIOAsync();
+                _streamSocket.Dispose();
+                _streamSocket = null;
+            }
+            _deviceService.Dispose();
+            _deviceService = null;
+        }
+
+        //	Console.WriteLine(Convert.ToUInt32(Mode.CurrentData).ToString("X2") + Convert.ToUInt32(PID.Speed).ToString("X2") + "\r");
     }
 }
     
