@@ -24,10 +24,11 @@
   </Applications>
   <Capabilities>
     <Capability Name="internetClient" />
+    <Capability Name="codeGeneration" />
+    <Capability Name="internetClientServer" />
     <Capability Name="privateNetworkClientServer" />
-    <uap3:Capability Name="userNotificationListener" />
+    <uap3:Capability Name="remoteSystem" />
     <uap:Capability Name="removableStorage" />
-    <DeviceCapability Name="location" />
     <DeviceCapability Name="bluetooth" />
     <DeviceCapability Name="bluetooth.rfcomm">
       <Device Id="any">

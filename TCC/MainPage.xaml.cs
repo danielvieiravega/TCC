@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Rfcomm;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
@@ -11,6 +9,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using TCC.ODBDriver;
 
 namespace TCC
 {
@@ -26,23 +25,19 @@ namespace TCC
         private DeviceInformation _selectedDevice;
         private RfcommDeviceService _deviceService;
         private StreamSocket _streamSocket;
-
-        private DeviceWatcher deviceWatcher = null;
-        private TypedEventHandler<DeviceWatcher, DeviceInformation> handlerAdded = null;
-        private TypedEventHandler<DeviceWatcher, DeviceInformationUpdate> handlerUpdated = null;
-        private TypedEventHandler<DeviceWatcher, DeviceInformationUpdate> handlerRemoved = null;
-        private TypedEventHandler<DeviceWatcher, Object> handlerEnumCompleted = null;
-        private TypedEventHandler<DeviceWatcher, Object> handlerStopped = null;
         
         public bool IsClosed { get; set; }
 
         private List<DeviceInformation> _devices = new List<DeviceInformation>();
 
+        private readonly ObdDriver _obdDriver = new ObdDriver();
+
         public MainPage()
         {
             IsClosed = true;
             InitializeComponent();
-
+           //_obdDriver.InitializeConnection().Wait();
+            
             //_obdProvider = new ObdProvider("danielvv");
         }
 
@@ -54,40 +49,38 @@ namespace TCC
             _dispatcherTimer.Start();
         }
 
-        private void DispatcherTimer_Tick(object sender, object e)
+        private async void DispatcherTimer_Tick(object sender, object e)
         {
-            if (!IsClosed)
-            {
                 try
                 {
-                    GetSpeed();
-                    GetRpm();
+                    //GetSpeed();
+                    //Task.Delay(delay);
+                    //GetRpm();
+                    //Task.Delay(delay);
+                    
+                    await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                    {
+                        GaugeSpeed.Value = await _obdDriver.GetSpeed();
+                        GaugeRpm.Value = await _obdDriver.GetRpm();
+                    });
+
                 }
                 catch (Exception exception)
                 {
                     TxtTeste.Text = exception.Message;
                 }
-            }
-            else
-            {
-                _dispatcherTimer.Stop();
-            }
         }
 
         public async Task ConfigureConnectionToElmAdapter()
         {
-            //var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
             var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
             _deviceCollection = await DeviceInformation.FindAllAsync(device);
-                
+
             if (_deviceCollection.Count > 0)
             {
-                foreach (var Vxx in _deviceCollection)
-                {
-                    var uu = Vxx;
-                }
+                //_selectedDevice = _deviceCollection.Single(x => x.Name == "TabletD");
+                _selectedDevice = _deviceCollection[0];
 
-                _selectedDevice = _deviceCollection.Single(x => x.Name == "danielvv");
                 _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
 
                 if (_deviceService == null)
@@ -100,7 +93,10 @@ namespace TCC
                 await _streamSocket.ConnectAsync(_deviceService.ConnectionHostName,
                     _deviceService.ConnectionServiceName);
 
-                _reader = new DataReader(_streamSocket.InputStream) {InputStreamOptions = InputStreamOptions.Partial};
+                _reader = new DataReader(_streamSocket.InputStream)
+                {
+                    InputStreamOptions = InputStreamOptions.Partial
+                };
                 _writer = new DataWriter(_streamSocket.OutputStream);
 
                 try
@@ -127,24 +123,24 @@ namespace TCC
         /// <summary>
         /// Initializes the communication with the ELM327
         /// </summary>
-        private void SendInitializationCommands()
+        private async void SendInitializationCommands()
         {
             //await LogStatus("Streams Setup!");
             //await LogStatus("Sending Commands!");
-            //await AddCommandLog("ATZ\r");
-            SendCommand("ATZ\r").Wait();
-            //await AddCommandLog(res, true);
-
-           // await AddCommandLog("ATSP6\r");
-            SendCommand("ATSP6\r").Wait();
-            // await AddCommandLog(res, true);
-
-            // await AddCommandLog("ATH0\r");
-            SendCommand("ATH0\r").Wait();
+           // await AddCommandLog("ATZ\r");
+            var res = await SendCommand("ATZ\r");
            // await AddCommandLog(res, true);
 
-           // await AddCommandLog("ATCAF1\r");
-            SendCommand("ATCAF1\r").Wait();
+           //  await AddCommandLog("ATSP6\r");
+            await SendCommand("ATSP6\r");
+          //   await AddCommandLog(res, true);
+
+           // await AddCommandLog("ATH0\r");
+            await SendCommand("ATH0\r");
+          //   await AddCommandLog(res, true);
+
+          //   await AddCommandLog("ATCAF1\r");
+            await SendCommand("ATCAF1\r");
           //  await AddCommandLog(res, true);
         }
 
@@ -173,8 +169,12 @@ namespace TCC
                 _writer.WriteString(command);
                 await _writer.StoreAsync();
                 await _writer.FlushAsync();
-                var count = await _reader.LoadAsync(512);
-                result = _reader.ReadString(count).Trim('>');
+                //var count = await _reader.LoadAsync(512);
+
+                IAsyncOperation<uint> count = _reader.LoadAsync(512);
+                count.AsTask().Wait();
+
+                result = _reader.ReadString(count.GetResults()).Trim('>');
             }
             catch (Exception e)
             {
@@ -198,16 +198,16 @@ namespace TCC
         {
             try
             {
-                //await AddCommandLog("010D\r");
+                await AddCommandLog("010D\r");
+                //await Task.Delay(5);
                 var response = await SendCommand("010D\r");
-                //await AddCommandLog(response, true);
-                if (HasValidLength(response))
-                {
-                    response = NormalizeResponse(response);
-                    if (response.Contains("410D"))
-                        await DecodeAndShowSpeed(response);
-                }
-                //await LogStatus("Ready for command");
+                await AddCommandLog(response, true);
+                //await Task.Delay(5);
+                if (!HasValidLength(response)) return;
+                response = NormalizeResponse(response);
+                if (response.Contains("410D"))
+                    await DecodeAndShowSpeed(response);
+                await LogStatus("Ready for command");
             }
             catch (Exception e)
             {
@@ -219,16 +219,16 @@ namespace TCC
         {
             try
             {
-                //await AddCommandLog("010C\r");
+                await AddCommandLog("010C\r");
+                //await Task.Delay(5);
                 var response = await SendCommand("010C\r");
-                //await AddCommandLog(response, true);
-                if (HasValidLength(response))
-                {
-                    response = NormalizeResponse(response);
-                    if (response.Contains("410C"))
-                        await DecodeAndShowRpm(response);
-                }
-                //await LogStatus("Ready for command");
+               // await Task.Delay(5);
+                await AddCommandLog(response, true);
+                if (!HasValidLength(response)) return;
+                response = NormalizeResponse(response);
+                if (response.Contains("410C"))
+                    await DecodeAndShowRpm(response);
+                await LogStatus("Ready for command");
             }
             catch (Exception e)
             {
@@ -263,6 +263,7 @@ namespace TCC
                 var rpm1 = ((256 * rpmAInt) + rpmBInt) / 4;
 
                 var rpmDouble = Convert.ToDouble(rpm1);
+
                 await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     GaugeRpm.Value = rpmDouble;
@@ -279,8 +280,11 @@ namespace TCC
         {
             try
             {
-                await ConfigureConnectionToElmAdapter();
-                
+                //await ConfigureConnectionToElmAdapter();
+                if (await _obdDriver.InitializeConnection())
+                {
+                    DispatcherTimerSetup();
+                }
             }
             catch (Exception exception)
             {
@@ -299,75 +303,18 @@ namespace TCC
 
         private async void BtnClose_Click(object sender, RoutedEventArgs e)
         {
-            await _streamSocket.CancelIOAsync();
-            _streamSocket.Dispose();
-            _streamSocket = null;
+            if (_streamSocket != null)
+            {
+                await _streamSocket.CancelIOAsync();
+                _streamSocket.Dispose();
+                _streamSocket = null;
+            }
             _deviceService.Dispose();
             _deviceService = null;
             IsClosed = true;
         }
 
-        private void BtnStartEnumeration_Click(object sender, RoutedEventArgs e)
-        {
-            deviceWatcher = DeviceInformation.CreateWatcher(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
-
-            handlerAdded = new TypedEventHandler<DeviceWatcher, DeviceInformation>(async (watcher, deviceInfo) =>
-            {
-                // Since we have the collection databound to a UI element, we need to update the collection on the UI thread.
-                await _dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                {
-                    TxtStatus.Text = "handlerAdded";
-                    //_selectedDevice = deviceInfo;
-                    _devices.Add(deviceInfo);
-                });
-            });
-            deviceWatcher.Added += handlerAdded;
-
-            handlerUpdated = new TypedEventHandler<DeviceWatcher, DeviceInformationUpdate>(async (watcher, deviceInfoUpdate) =>
-            {
-                // Since we have the collection databound to a UI element, we need to update the collection on the UI thread.
-                await _dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                {
-                    // Find the corresponding updated DeviceInformation in the collection and pass the update object
-                    // to the Update method of the existing DeviceInformation. This automatically updates the object
-                    // for us.
-                    TxtStatus.Text = "handlerUpdate";
-                });
-            });
-            deviceWatcher.Updated += handlerUpdated;
-
-            handlerRemoved = new TypedEventHandler<DeviceWatcher, DeviceInformationUpdate>(async (watcher, deviceInfoUpdate) =>
-            {
-                // Since we have the collection databound to a UI element, we need to update the collection on the UI thread.
-                await _dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                {
-                    TxtStatus.Text = "handlerRemoved";
-                });
-            });
-            deviceWatcher.Removed += handlerRemoved;
-
-            handlerEnumCompleted = new TypedEventHandler<DeviceWatcher, Object>(async (watcher, obj) =>
-            {
-                await _dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                {
-                    TxtStatus.Text = "handlerEnumCompleted";
-                });
-            });
-            deviceWatcher.EnumerationCompleted += handlerEnumCompleted;
-
-            handlerStopped = new TypedEventHandler<DeviceWatcher, object>(async (watcher, obj) =>
-            {
-                await _dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                {
-                    TxtStatus.Text = "handlerStopped";
-                });
-            });
-
-            deviceWatcher.Stopped += handlerStopped;
-
-            deviceWatcher.Start();
-        }
-
+        
         
         //	Console.WriteLine(Convert.ToUInt32(Mode.CurrentData).ToString("X2") + Convert.ToUInt32(PID.Speed).ToString("X2") + "\r");
     }

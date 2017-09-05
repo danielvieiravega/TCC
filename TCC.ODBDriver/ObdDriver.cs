@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.Rfcomm;
 using Windows.Devices.Enumeration;
+using Windows.Foundation;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 
@@ -15,8 +16,6 @@ namespace TCC.ODBDriver
         private DataReader _reader;
         private DataWriter _writer;
 
-        private string DeviceName { get; }
-
         private StreamSocket _streamSocket;
 
         public  ObdDriver()
@@ -24,7 +23,7 @@ namespace TCC.ODBDriver
             _streamSocket = new StreamSocket();
         }
 
-        private async Task<bool> ConfigureConnectionToElmAdapter()
+        public async Task<bool> InitializeConnection()
         {
             var result = false;
             var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
@@ -74,33 +73,37 @@ namespace TCC.ODBDriver
         /// </summary>
         private async Task SendInitializationCommands()
         {
-            //await _logger.Log("Streams Setup!");
-            //await _logger.Log("Sending Commands!");
-           // await _logger.Log("ATZ\r");
-            var res = await SendCommand("ATZ\r");
-            // await _logger.Log(res);
+            await SendCommand("ATZ\r");
+            
+            await SendCommand("ATSP6\r");
 
-            //await _logger.Log("ATSP6\r");
-            res = await SendCommand("ATSP6\r");
-            // await _logger.Log(res);
+            await SendCommand("ATH0\r");
 
-            // await _logger.Log("ATH0\r");
-            res = await SendCommand("ATH0\r");
-            // await _logger.Log(res);
-
-            //await _logger.Log("ATCAF1\r");
-            res = await SendCommand("ATCAF1\r");
-            // await _logger.Log(res);
+            await SendCommand("ATCAF1\r");
         }
 
         private async Task<string> SendCommand(string command)
         {
-            //await _logger.Log($"Sending Command: {command}");
-            _writer.WriteString(command);
-            await _writer.StoreAsync();
-            await _writer.FlushAsync();
-            var count = await _reader.LoadAsync(512);
-            return _reader.ReadString(count).Trim('>');
+            var result = "Failure sending command!";
+            try
+            {
+                //await LogStatus(string.Format("Sending Command - {0}", command));
+                _writer.WriteString(command);
+                await _writer.StoreAsync();
+                await _writer.FlushAsync();
+                //var count = await _reader.LoadAsync(512);
+
+                IAsyncOperation<uint> count = _reader.LoadAsync(512);
+                count.AsTask().Wait();
+
+                result = _reader.ReadString(count.GetResults()).Trim('>');
+            }
+            catch (Exception e)
+            {
+                //TxtTeste.Text = e.Message;
+            }
+
+            return result;
         }
 
         public async Task<double> GetSpeed()
@@ -143,7 +146,7 @@ namespace TCC.ODBDriver
             return result;
         }
 
-        private double ParseSpeed(string response)
+        private static double ParseSpeed(string response)
         {
             var result = 0.0;
             try
@@ -161,7 +164,7 @@ namespace TCC.ODBDriver
             return result;
         }
 
-        private double ParseRpm(string response)
+        private static double ParseRpm(string response)
         {
             var result = 0.0;
             try
