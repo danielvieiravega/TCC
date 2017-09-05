@@ -106,8 +106,6 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ILogger.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="Mode.cs" />
     <Compile Include="PID.cs" />
     <Compile Include="ObdDriver.cs" />
