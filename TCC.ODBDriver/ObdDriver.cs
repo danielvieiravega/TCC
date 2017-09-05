@@ -5,6 +5,8 @@ using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
+using MetroLog;
+using TCC.ODBDriver.Services;
 
 namespace TCC.ODBDriver
 {
@@ -49,7 +51,7 @@ namespace TCC.ODBDriver
                     }
                     catch (Exception e)
                     {
-                        // await _logger.Log(e.Message);
+                        LoggingServices.Instance.WriteLine<ObdDriver>($"Failure sending initialization commands: {e.Message}", LogLevel.Fatal);
                     }
 
                     result = true;
@@ -98,10 +100,15 @@ namespace TCC.ODBDriver
             }
             catch (Exception e)
             {
-                //TxtTeste.Text = e.Message;
+                LoggingServices.Instance.WriteLine<ObdDriver>($"Failure sending sending command: {e.Message}", LogLevel.Warn);
             }
 
             return result;
+        }
+
+        private static string GetCommand(Mode mode, PID pid)
+        {
+            return $"{Convert.ToUInt32(mode):X2}{Convert.ToUInt32(pid):X2}\r";
         }
 
         public async Task<double> GetSpeed()
@@ -109,16 +116,16 @@ namespace TCC.ODBDriver
             var result = 0.0;
             try
             {
-                var response = await SendCommand("010D\r");
+                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.Speed));
+
                 if (HasValidLength(response) && response.Contains("410D"))
                 {
-                    response = NormalizeResponse(response);
-                    result = ParseSpeed(response);
+                    result = ParseData(NormalizeResponse(response), PID.Speed);
                 }
             }
             catch (Exception e)
             {
-                //await _logger.Log(e.Message);
+                LoggingServices.Instance.WriteLine<ObdDriver>($"Failure getting speed: {e.Message}", LogLevel.Warn);
             }
 
             return result;
@@ -129,64 +136,60 @@ namespace TCC.ODBDriver
             var result = 0.0;
             try
             {
-                var response = await SendCommand("010C\r");
+                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.RPM));
+
                 if (HasValidLength(response) && response.Contains("410C"))
                 {
-                    response = NormalizeResponse(response);
-                    result = ParseRpm(response);
+                    result = ParseData(NormalizeResponse(response), PID.RPM);
                 }
             }
             catch (Exception e)
             {
-                //await _logger.Log(e.Message);
+                LoggingServices.Instance.WriteLine<ObdDriver>($"Failure getting RPM: {e.Message}", LogLevel.Warn);
             }
 
             return result;
         }
 
-        private static double ParseSpeed(string response)
+        private static double ParseData(string response, PID pid)
         {
             var result = 0.0;
+
             try
             {
-                var speedHexString = response.Substring(4);
-                var speed = Convert.ToInt32(speedHexString, 16);
+                switch (pid)
+                {
+                    case PID.RPM:
+                        var rpmInHex = response.Substring(4);
+                        var rpmA = rpmInHex.Substring(0, 2);
+                        var rpmB = rpmInHex.Substring(2);
+                        var rpmAInt = Convert.ToInt32(rpmA, 16);
+                        var rpmBInt = Convert.ToInt32(rpmB, 16);
+                        var rpm = ((256 * rpmAInt) + rpmBInt) / 4;
+                        result = Convert.ToDouble(rpm);
+                        break;
 
-                result = speed;
+                    case PID.Speed:
+                        var speedHexString = response.Substring(4);
+                        var speed = Convert.ToInt32(speedHexString, 16);
+                        result = Convert.ToDouble(speed);
+                        break;
+
+                    case PID.EngineTemperature:
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(pid), pid, null);
+                }
             }
             catch (Exception e)
             {
-                // _logger.Log(e.Message);
+                LoggingServices.Instance.WriteLine<ObdDriver>($"Failure parsing data: {e.Message}", LogLevel.Warn);
             }
 
             return result;
         }
-
-        private static double ParseRpm(string response)
-        {
-            var result = 0.0;
-            try
-            {
-                var rpmInHex = response.Substring(4);
-
-                var rpmA = rpmInHex.Substring(0, 2);
-                var rpmB = rpmInHex.Substring(2);
-                
-                var rpmAInt = Convert.ToInt32(rpmA, 16);
-                var rpmBInt = Convert.ToInt32(rpmB, 16);
-
-                var rpm = ((256 * rpmAInt) + rpmBInt) / 4;
-
-                result = Convert.ToDouble(rpm);
-            }
-            catch (Exception e)
-            {
-                // _logger.Log(e.Message);
-            }
-
-            return result;
-        }
-
+        
         private static string NormalizeResponse(string res)
         {
             return res.Replace("\r", "");
@@ -208,8 +211,6 @@ namespace TCC.ODBDriver
             _deviceService.Dispose();
             _deviceService = null;
         }
-
-        //	Console.WriteLine(Convert.ToUInt32(Mode.CurrentData).ToString("X2") + Convert.ToUInt32(PID.Speed).ToString("X2") + "\r");
     }
 }
     

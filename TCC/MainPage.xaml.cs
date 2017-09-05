@@ -61,6 +61,7 @@ namespace TCC
                 if (await _obdDriver.InitializeConnection())
                 {
                     DispatcherTimerSetup();
+                    IsClosed = false;
                 }
             }
             catch (Exception exception)
