@@ -3,6 +3,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using TCC.ODBDriver;
+using ThingSpeakWinRT;
 
 namespace TCC
 {
@@ -14,6 +15,9 @@ namespace TCC
         public bool IsClosed { get; set; }
 
         private readonly ObdDriver _obdDriver = new ObdDriver();
+        private readonly ThingSpeakClient _thingSpeakClient = new ThingSpeakClient(false);
+
+        private const string WriteApiKey = "DM63F2BD1CS70GJC";
 
         public MainPage()
         {
@@ -28,7 +32,7 @@ namespace TCC
             _dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
             _dispatcherTimer.Start();
         }
-
+        
         private async void DispatcherTimer_Tick(object sender, object e)
         {
             if (IsClosed)
@@ -39,20 +43,23 @@ namespace TCC
 
             try
             {
-
                 await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
-                    GaugeSpeed.Value = await _obdDriver.GetSpeed();
-                    GaugeRpm.Value = await _obdDriver.GetRpm();
-                });
+                    var speed = await _obdDriver.GetSpeed();
+                    var rpm = await _obdDriver.GetRpm();
 
+                    GaugeSpeed.Value = speed;
+                    GaugeRpm.Value = rpm;
+                        
+                    var dataFeed = new ThingSpeakFeed { Field1 = speed.ToString(), Field2 = rpm.ToString() };
+                    await _thingSpeakClient.UpdateFeedAsync(WriteApiKey, dataFeed);
+                });
             }
             catch (Exception exception)
             {
                 TxtTeste.Text = exception.Message;
             }
         }
-
 
         private async void BtnStart_Click(object sender, RoutedEventArgs e)
         {
@@ -80,6 +87,5 @@ namespace TCC
            await _obdDriver.Close();
             IsClosed = true;
         }
-        
     }
 }

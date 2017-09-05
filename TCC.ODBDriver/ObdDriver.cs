@@ -19,12 +19,7 @@ namespace TCC.ODBDriver
         private DataWriter _writer;
 
         private StreamSocket _streamSocket;
-
-        public  ObdDriver()
-        {
-            _streamSocket = new StreamSocket();
-        }
-
+        
         public async Task<bool> InitializeConnection()
         {
             var result = false;
@@ -154,7 +149,6 @@ namespace TCC.ODBDriver
         private static double ParseData(string response, PID pid)
         {
             var result = 0.0;
-
             try
             {
                 switch (pid)
