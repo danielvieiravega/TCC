@@ -131,11 +131,11 @@ namespace TCC.ODBDriver
             var result = 0.0;
             try
             {
-                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.RPM));
+                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.EngineRpm));
 
                 if (HasValidLength(response) && response.Contains("410C"))
                 {
-                    result = ParseData(NormalizeResponse(response), PID.RPM);
+                    result = ParseData(NormalizeResponse(response), PID.EngineRpm);
                 }
             }
             catch (Exception e)
@@ -153,7 +153,7 @@ namespace TCC.ODBDriver
             {
                 switch (pid)
                 {
-                    case PID.RPM:
+                    case PID.EngineRpm:
                         var rpmInHex = response.Substring(4);
                         var rpmA = rpmInHex.Substring(0, 2);
                         var rpmB = rpmInHex.Substring(2);

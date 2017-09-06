@@ -6,9 +6,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:WinRTXamlToolkit.Controls"
+    xmlns:charting="using:WinRTXamlToolkit.Controls.DataVisualization.Charting"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ButtonDisabledBackgroundThemeBrush}">
         <controls:Gauge x:Name="GaugeSpeed"
                         Value="0"
                         Minimum="0"
@@ -25,7 +26,7 @@
         <controls:Gauge x:Name="GaugeRpm"
                         Value="0"
                         Minimum="0"
-                        Maximum="1500"
+                        Maximum="8000"
                         ScaleWidth="26"
                         Unit="RPM"
                         TickBrush="Gainsboro"
@@ -34,12 +35,37 @@
                         ValueBrush="Black" 
                         Height="100"  
                         Width="100"
-                        Margin="211,61,407,221"
+                        Margin="210,86,458,246"
         />
-        <TextBox Name="TxtTeste" HorizontalAlignment="Left" Margin="358,11,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="400" Height="110"/>
-        <Button Name="BtnStart"  Content="Start" HorizontalAlignment="Left" Margin="682,271,0,0" VerticalAlignment="Top" Click="BtnStart_Click"/>
-        <TextBox x:Name="TxtStatus" HorizontalAlignment="Left" Margin="358,131,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="400" Height="110"/>
-        <Button x:Name="BtnClose"  Content="Close" HorizontalAlignment="Left" Margin="682,321,0,0" VerticalAlignment="Top" Click="BtnClose_Click"/>
+        <Button Name="BtnStart"  Content="Start" HorizontalAlignment="Left" Margin="682,331,0,0" VerticalAlignment="Top" Click="BtnStart_Click" Width="56"/>
+        <Button x:Name="BtnClose"  Content="Close" HorizontalAlignment="Left" Margin="682,390,0,0" VerticalAlignment="Top" Click="BtnClose_Click"/>
+        <controls:Gauge x:Name="GaugeIntakeAirTemperature"
+            Value="0"
+            Minimum="0"
+            Maximum="50"
+            ScaleWidth="26"
+            Unit="C"
+            TickBrush="Gainsboro"
+            ScaleTickBrush="{ThemeResource BackButtonForegroundThemeBrush}"
+            UnitBrush="Black"
+            ValueBrush="Black"
+            Margin="37,271,641,89" />
+        <controls:Gauge x:Name="GaugeEngineTemperature"
+            Value="0"
+            Minimum="0"
+            Maximum="100"
+            ScaleWidth="26"
+            Unit="C"
+            TickBrush="Gainsboro"
+            ScaleTickBrush="{ThemeResource BackButtonForegroundThemeBrush}"
+            UnitBrush="Black"
+            ValueBrush="Black"
+            Margin="157,271,521,89" />
+        <GridView HorizontalAlignment="Left" Height="250" Margin="457,10,0,0" VerticalAlignment="Top" Width="301">
+            <charting:Chart x:Name="SpeedChart" HorizontalAlignment="Left" VerticalAlignment="Top" Width="302" Height="240">
+                <charting:LineSeries Title="Speed" Margin="0" IndependentValuePath="Name" DependentValuePath="Speed" IsSelectionEnabled="True"/>
+            </charting:Chart>
+        </GridView>
     </Grid>
 </Page>
 

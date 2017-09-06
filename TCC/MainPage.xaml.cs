@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using TCC.ODBDriver;
 using ThingSpeakWinRT;
+using WinRTXamlToolkit.Controls.DataVisualization.Charting;
 
 namespace TCC
 {
@@ -23,6 +25,31 @@ namespace TCC
         {
             IsClosed = true;
             InitializeComponent();
+
+            //Random rand = new Random();
+            //List<FinancialStuff> financialStuffList = new List<FinancialStuff>
+            //{
+            //    new FinancialStuff() {Name = "MSFT", Amount = rand.Next(0, 100)},
+            //    new FinancialStuff() {Name = "AAPL", Amount = rand.Next(0, 100)},
+            //    new FinancialStuff() {Name = "GOOG", Amount = rand.Next(0, 100)},
+            //    new FinancialStuff() {Name = "BBRY", Amount = rand.Next(0, 100)}
+            //};
+
+            //var lineSeries = SpeedChart.Series[0] as LineSeries;
+            //if (lineSeries != null)
+            //    lineSeries.ItemsSource = financialStuffList;
+        }
+
+        public class FinancialStuff
+        {
+            public string Name { get; set; }
+            public int Amount { get; set; }
+        }
+
+        public class Speed
+        {
+            public string Name { get; set; }
+            public double Value { get; set; }
         }
 
         public void DispatcherTimerSetup()
@@ -50,14 +77,24 @@ namespace TCC
 
                     GaugeSpeed.Value = speed;
                     GaugeRpm.Value = rpm;
-                        
-                    var dataFeed = new ThingSpeakFeed { Field1 = speed.ToString(), Field2 = rpm.ToString() };
-                    await _thingSpeakClient.UpdateFeedAsync(WriteApiKey, dataFeed);
+
+                    try
+                    {
+                        var dataFeed = new ThingSpeakFeed { Field1 = speed.ToString(), Field2 = rpm.ToString() };
+                        await _thingSpeakClient.UpdateFeedAsync(WriteApiKey, dataFeed);
+                    }
+                    catch (Exception exception)
+                    {
+                        var dsafsfd = 1;
+                    }
+
+                    var lineSeries = SpeedChart.Series[0] as LineSeries;
+                    (SpeedChart.Series[0] as LineSeries).ItemsSource = new List<Speed> {new Speed { Name = "a", Value = speed }, new Speed { Name = "v", Value = speed -10 }, new Speed { Name = "c", Value = speed - 20 }, new Speed { Name = "a", Value = speed - 30} };
                 });
             }
             catch (Exception exception)
             {
-                TxtTeste.Text = exception.Message;
+                //TxtTeste.Text = exception.Message;
             }
         }
 
@@ -73,7 +110,7 @@ namespace TCC
             }
             catch (Exception exception)
             {
-                TxtTeste.Text = exception.Message;
+                //TxtTeste.Text = exception.Message;
             }
         }
 

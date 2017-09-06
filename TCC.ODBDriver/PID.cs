@@ -2,12 +2,14 @@
 {
     /// <summary>
     /// List of supported PIDs
-    /// <see cref="http://en.wikipedia.org/wiki/OBD-II_PIDs"/>
     /// </summary>
     public enum PID
     {
-        RPM = 0x0C,
+        EngineRpm = 0x0C,
         Speed = 0x0D,
         EngineTemperature = 0x05,
-    };
+        FuelPressure = 0x0A,
+        ThrottlePosition = 0x11,
+        IntakeAirTemperature = 0x0F
+    }
 }
