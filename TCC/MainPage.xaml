@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:WinRTXamlToolkit.Controls"
-    xmlns:charting="using:WinRTXamlToolkit.Controls.DataVisualization.Charting"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ButtonDisabledBackgroundThemeBrush}">
@@ -61,11 +60,6 @@
             UnitBrush="Black"
             ValueBrush="Black"
             Margin="157,271,521,89" />
-        <GridView HorizontalAlignment="Left" Height="250" Margin="457,10,0,0" VerticalAlignment="Top" Width="301">
-            <charting:Chart x:Name="SpeedChart" HorizontalAlignment="Left" VerticalAlignment="Top" Width="302" Height="240">
-                <charting:LineSeries Title="Speed" Margin="0" IndependentValuePath="Name" DependentValuePath="Speed" IsSelectionEnabled="True"/>
-            </charting:Chart>
-        </GridView>
     </Grid>
 </Page>
 

@@ -146,6 +146,86 @@ namespace TCC.ODBDriver
             return result;
         }
 
+        public async Task<double> GetEngineTemperature()
+        {
+            var result = 0.0;
+            try
+            {
+                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.EngineTemperature));
+
+                if (HasValidLength(response) && response.Contains("4105"))
+                {
+                    result = ParseData(NormalizeResponse(response), PID.EngineTemperature);
+                }
+            }
+            catch (Exception e)
+            {
+                LoggingServices.Instance.WriteLine<ObdDriver>($"Failure getting EngineTemperature: {e.Message}", LogLevel.Warn);
+            }
+
+            return result;
+        }
+
+        public async Task<double> GetFuelPressure()
+        {
+            var result = 0.0;
+            try
+            {
+                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.FuelPressure));
+
+                if (HasValidLength(response) && response.Contains("410A"))
+                {
+                    result = ParseData(NormalizeResponse(response), PID.FuelPressure);
+                }
+            }
+            catch (Exception e)
+            {
+                LoggingServices.Instance.WriteLine<ObdDriver>($"Failure getting FuelPressure: {e.Message}", LogLevel.Warn);
+            }
+
+            return result;
+        }
+
+        public async Task<double> GetThrottlePosition()
+        {
+            var result = 0.0;
+            try
+            {
+                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.ThrottlePosition));
+
+                if (HasValidLength(response) && response.Contains("4111"))
+                {
+                    result = ParseData(NormalizeResponse(response), PID.ThrottlePosition);
+                }
+            }
+            catch (Exception e)
+            {
+                LoggingServices.Instance.WriteLine<ObdDriver>($"Failure getting ThrottlePosition: {e.Message}", LogLevel.Warn);
+            }
+
+            return result;
+        }
+
+        public async Task<double> GetIntakeAirTemperature()
+        {
+            var result = 0.0;
+            try
+            {
+                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.IntakeAirTemperature));
+
+                if (HasValidLength(response) && response.Contains("410F"))
+                {
+                    result = ParseData(NormalizeResponse(response), PID.IntakeAirTemperature);
+                }
+            }
+            catch (Exception e)
+            {
+                LoggingServices.Instance.WriteLine<ObdDriver>($"Failure getting IntakeAirTemperature: {e.Message}", LogLevel.Warn);
+            }
+
+            return result;
+        }
+
         private static double ParseData(string response, PID pid)
         {
             var result = 0.0;
@@ -170,6 +250,27 @@ namespace TCC.ODBDriver
                         break;
 
                     case PID.EngineTemperature:
+                        var engineTemperatureHexString = response.Substring(4);
+                        var engineTemperature = Convert.ToInt32(engineTemperatureHexString, 16);
+                        result = Convert.ToDouble(engineTemperature) - 40;
+                        break;
+
+                    case PID.FuelPressure:
+                        var fuelPressureHexString = response.Substring(4);
+                        var fuelPressure = Convert.ToInt32(fuelPressureHexString, 16);
+                        result = Convert.ToDouble(fuelPressure) * 3;
+                        break;
+
+                    case PID.ThrottlePosition:
+                        var throttlePositionHexString = response.Substring(4);
+                        var throttlePosition = Convert.ToInt32(throttlePositionHexString, 16);
+                        result = Convert.ToDouble(throttlePosition) * 100 / 255;
+                        break;
+
+                    case PID.IntakeAirTemperature:
+                        var intakeAirTemperatureHexString = response.Substring(4);
+                        var intakeAirTemperature = Convert.ToInt32(intakeAirTemperatureHexString, 16);
+                        result = Convert.ToDouble(intakeAirTemperature) - 40;
                         break;
 
                     default:
