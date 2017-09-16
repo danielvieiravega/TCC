@@ -9,7 +9,10 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ButtonDisabledBackgroundThemeBrush}">
-        <controls:Gauge x:Name="GaugeSpeed"
+        <Button Name="BtnStart"  Content="Start" HorizontalAlignment="Left" Margin="682,331,0,0" VerticalAlignment="Top" Click="BtnStart_Click" Width="56"/>
+        <Button x:Name="BtnClose"  Content="Close" HorizontalAlignment="Left" Margin="682,390,0,0" VerticalAlignment="Top" Click="BtnClose_Click"/>
+        <Grid HorizontalAlignment="Left" Height="412" Margin="10,10,0,0" VerticalAlignment="Top" Width="350">
+            <controls:Gauge x:Name="GaugeSpeed"
                         Value="0"
                         Minimum="0"
                         Maximum="200"
@@ -18,11 +21,9 @@
                         TickBrush="Gainsboro"
                         ScaleTickBrush="{ThemeResource BackButtonForegroundThemeBrush}"
                         UnitBrush="Black"
-                        ValueBrush="Black" 
-                        Height="100"  
-                        Width="100"
-                        Margin="37,61,581,221" />
-        <controls:Gauge x:Name="GaugeRpm"
+                        ValueBrush="Black"
+                        Margin="10,48,190,216" Width="150" Height="148" />
+            <controls:Gauge x:Name="GaugeRpm"
                         Value="0"
                         Minimum="0"
                         Maximum="8000"
@@ -31,35 +32,27 @@
                         TickBrush="Gainsboro"
                         ScaleTickBrush="{ThemeResource BackButtonForegroundThemeBrush}"
                         UnitBrush="Black"
-                        ValueBrush="Black" 
-                        Height="100"  
-                        Width="100"
-                        Margin="210,86,458,246"
+                        ValueBrush="Black"
+                        Margin="190,48,10,214" Width="150" Height="150"
         />
-        <Button Name="BtnStart"  Content="Start" HorizontalAlignment="Left" Margin="682,331,0,0" VerticalAlignment="Top" Click="BtnStart_Click" Width="56"/>
-        <Button x:Name="BtnClose"  Content="Close" HorizontalAlignment="Left" Margin="682,390,0,0" VerticalAlignment="Top" Click="BtnClose_Click"/>
-        <controls:Gauge x:Name="GaugeIntakeAirTemperature"
-            Value="0"
-            Minimum="0"
-            Maximum="50"
-            ScaleWidth="26"
-            Unit="C"
-            TickBrush="Gainsboro"
-            ScaleTickBrush="{ThemeResource BackButtonForegroundThemeBrush}"
-            UnitBrush="Black"
-            ValueBrush="Black"
-            Margin="37,271,641,89" />
-        <controls:Gauge x:Name="GaugeEngineTemperature"
-            Value="0"
-            Minimum="0"
-            Maximum="100"
-            ScaleWidth="26"
-            Unit="C"
-            TickBrush="Gainsboro"
-            ScaleTickBrush="{ThemeResource BackButtonForegroundThemeBrush}"
-            UnitBrush="Black"
-            ValueBrush="Black"
-            Margin="157,271,521,89" />
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,229,0,0" VerticalAlignment="Top" Width="178">
+                <TextBlock x:Name="TxtTempEngine"  TextWrapping="Wrap" Text="0" Margin="78.8,18.8,58.8,8.8" FontFamily="Stencil" FontWeight="Bold" FontSize="14"/>
+            </Border>
+            <TextBlock x:Name="LblTempEngine" HorizontalAlignment="Left" Margin="96,229,0,0" TextWrapping="Wrap" Text="Temperatura do motor" VerticalAlignment="Top" FontSize="14"/>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,291,0,0" VerticalAlignment="Top" Width="178">
+                <TextBlock x:Name="TxtTempIntake"  TextWrapping="Wrap" Text="0" Margin="80.8,16.8,56.8,8.8" FontFamily="Stencil" FontWeight="Bold" FontSize="14"/>
+            </Border>
+            <TextBlock x:Name="LblTempIntake" HorizontalAlignment="Left" Margin="100,291,0,0" TextWrapping="Wrap" Text="Temperatura do ar" VerticalAlignment="Top" FontSize="14"/>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,348,0,0" VerticalAlignment="Top" Width="85">
+                <TextBlock x:Name="TxtFuelPressure"  TextWrapping="Wrap" Text="0 kPa" Margin="8.8,16.8,9,8.8" FontFamily="Stencil" FontWeight="Bold" FontSize="14"/>
+            </Border>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="168,348,0,0" VerticalAlignment="Top" Width="85">
+                <TextBlock x:Name="TxtThrotlePosition"  TextWrapping="Wrap" Text="100 %" Margin="23.8,16.8,17,8.8" FontFamily="Stencil" FontWeight="Bold" FontSize="14"/>
+            </Border>
+            <TextBlock x:Name="LblPressure" HorizontalAlignment="Left" Margin="76,349,0,0" TextWrapping="Wrap" Text="Pressão Combustível" VerticalAlignment="Top" FontSize="9"/>
+            <TextBlock x:Name="LblThrotlePosition" HorizontalAlignment="Left" Margin="173,349,0,0" TextWrapping="Wrap" Text="Posição acelerador" VerticalAlignment="Top" FontSize="9"/>
+        </Grid>
+
     </Grid>
 </Page>
 

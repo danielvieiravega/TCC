@@ -99,10 +99,21 @@ namespace TCC
             _obdDriver.Close().Wait();
         }
 
-        private async void BtnClose_Click(object sender, RoutedEventArgs e)
+        private static int value = 0;
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
-           await _obdDriver.Close();
-            IsClosed = true;
+           //await _obdDriver.Close();
+           //IsClosed = true;
+
+            TxtTempEngine.Text = value.ToString();
+            TxtTempIntake.Text = value.ToString();
+            GaugeRpm.Value = value;
+            GaugeSpeed.Value = value;
+            TxtFuelPressure.Text = value + " KpA";
+            TxtThrotlePosition.Text = value + " %";
+
+            value += 2;
         }
     }
 }
