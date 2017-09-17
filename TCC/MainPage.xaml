@@ -22,7 +22,7 @@
                         ScaleTickBrush="{ThemeResource BackButtonForegroundThemeBrush}"
                         UnitBrush="Black"
                         ValueBrush="Black"
-                        Margin="10,48,190,216" Width="150" Height="148" />
+                        Margin="10,48,190,216" Width="150" Height="150" />
             <controls:Gauge x:Name="GaugeRpm"
                         Value="0"
                         Minimum="0"
@@ -36,18 +36,18 @@
                         Margin="190,48,10,214" Width="150" Height="150"
         />
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,229,0,0" VerticalAlignment="Top" Width="178">
-                <TextBlock x:Name="TxtTempEngine"  TextWrapping="Wrap" Text="0" Margin="78.8,18.8,58.8,8.8" FontFamily="Stencil" FontWeight="Bold" FontSize="14"/>
+                <TextBlock x:Name="TxtTempEngine"  TextWrapping="Wrap" Text="0 °C" Margin="78.8,18.8,58.8,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
             </Border>
             <TextBlock x:Name="LblTempEngine" HorizontalAlignment="Left" Margin="96,229,0,0" TextWrapping="Wrap" Text="Temperatura do motor" VerticalAlignment="Top" FontSize="14"/>
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,291,0,0" VerticalAlignment="Top" Width="178">
-                <TextBlock x:Name="TxtTempIntake"  TextWrapping="Wrap" Text="0" Margin="80.8,16.8,56.8,8.8" FontFamily="Stencil" FontWeight="Bold" FontSize="14"/>
+                <TextBlock x:Name="TxtTempIntake"  TextWrapping="Wrap" Text="0 °C" Margin="80.8,16.8,56.8,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
             </Border>
             <TextBlock x:Name="LblTempIntake" HorizontalAlignment="Left" Margin="100,291,0,0" TextWrapping="Wrap" Text="Temperatura do ar" VerticalAlignment="Top" FontSize="14"/>
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,348,0,0" VerticalAlignment="Top" Width="85">
-                <TextBlock x:Name="TxtFuelPressure"  TextWrapping="Wrap" Text="0 kPa" Margin="8.8,16.8,9,8.8" FontFamily="Stencil" FontWeight="Bold" FontSize="14"/>
+                <TextBlock x:Name="TxtFuelPressure"  TextWrapping="Wrap" Text="0 kPa" Margin="11.8,16.8,6,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
             </Border>
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="168,348,0,0" VerticalAlignment="Top" Width="85">
-                <TextBlock x:Name="TxtThrotlePosition"  TextWrapping="Wrap" Text="100 %" Margin="23.8,16.8,17,8.8" FontFamily="Stencil" FontWeight="Bold" FontSize="14"/>
+                <TextBlock x:Name="TxtThrotlePosition"  TextWrapping="Wrap" Text="100 %" Margin="23.8,16.8,17,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
             </Border>
             <TextBlock x:Name="LblPressure" HorizontalAlignment="Left" Margin="76,349,0,0" TextWrapping="Wrap" Text="Pressão Combustível" VerticalAlignment="Top" FontSize="9"/>
             <TextBlock x:Name="LblThrotlePosition" HorizontalAlignment="Left" Margin="173,349,0,0" TextWrapping="Wrap" Text="Posição acelerador" VerticalAlignment="Top" FontSize="9"/>

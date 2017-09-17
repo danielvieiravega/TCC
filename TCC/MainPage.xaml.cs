@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -13,20 +11,15 @@ namespace TCC
     {
         private readonly CoreDispatcher _dispatcher = Window.Current.Dispatcher;
         private DispatcherTimer _dispatcherTimer;
-        
         public bool IsClosed { get; set; }
-
         private readonly ObdDriver _obdDriver = new ObdDriver();
         private readonly ThingSpeakClient _thingSpeakClient = new ThingSpeakClient(false);
-
         private const string WriteApiKey = "DM63F2BD1CS70GJC";
         
-
         public MainPage()
         {
             IsClosed = true;
-            InitializeComponent();
-            
+            InitializeComponent();            
         }
         
         public class Speed
@@ -57,24 +50,32 @@ namespace TCC
                 {
                     var speed = await _obdDriver.GetSpeed();
                     var rpm = await _obdDriver.GetRpm();
+                    var engineTemp = await _obdDriver.GetEngineTemperature();
+                    var intakeTemp = await _obdDriver.GetIntakeAirTemperature();
+                    var throtlePos = await _obdDriver.GetThrottlePosition();
+                    var fuelPres = await _obdDriver.GetFuelPressure();
 
                     GaugeSpeed.Value = speed;
                     GaugeRpm.Value = rpm;
+                    TxtTempEngine.Text = engineTemp + " °C";
+                    TxtTempIntake.Text = intakeTemp + " °C";
+                    TxtFuelPressure.Text = fuelPres + " KpA";
+                    TxtThrotlePosition.Text = (int)throtlePos + " %";
 
                     try
                     {
                         var dataFeed = new ThingSpeakFeed { Field1 = speed.ToString(), Field2 = rpm.ToString() };
                         await _thingSpeakClient.UpdateFeedAsync(WriteApiKey, dataFeed);
                     }
-                    catch (Exception exception)
+                    catch (Exception)
                     {
-                        var xuxuxuxu = exception;
+                        // ignored
                     }
                 });
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                //TxtTeste.Text = exception.Message;
+                // ignored
             }
         }
 
@@ -88,9 +89,9 @@ namespace TCC
                     IsClosed = false;
                 }
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                //TxtTeste.Text = exception.Message;
+                // ignored
             }
         }
 
@@ -99,21 +100,21 @@ namespace TCC
             _obdDriver.Close().Wait();
         }
 
-        private static int value = 0;
+        //private static int value = 0;
 
-        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        private async void BtnClose_Click(object sender, RoutedEventArgs e)
         {
-           //await _obdDriver.Close();
-           //IsClosed = true;
+            await _obdDriver.Close();
+            IsClosed = true;
 
-            TxtTempEngine.Text = value.ToString();
-            TxtTempIntake.Text = value.ToString();
-            GaugeRpm.Value = value;
-            GaugeSpeed.Value = value;
-            TxtFuelPressure.Text = value + " KpA";
-            TxtThrotlePosition.Text = value + " %";
+            //TxtTempEngine.Text = value + " °C";
+            //TxtTempIntake.Text = value + " °C";
+            //GaugeRpm.Value = value;
+            //GaugeSpeed.Value = value;
+            //TxtFuelPressure.Text = value + " KpA";
+            //TxtThrotlePosition.Text = value + " %";
 
-            value += 2;
+            //value += 2;
         }
     }
 }
