@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.Rfcomm;
 using Windows.Devices.Enumeration;
@@ -20,7 +21,7 @@ namespace TCC.ODBDriver
 
         private StreamSocket _streamSocket;
         
-        public async Task<bool> InitializeConnection()
+        public async Task<bool> InitializeConnection(string deviceName)
         {
             var result = false;
             var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
@@ -28,8 +29,10 @@ namespace TCC.ODBDriver
 
             if (_deviceCollection.Count > 0)
             {
-                _selectedDevice = _deviceCollection[0];
-                _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
+                //_selectedDevice = _deviceCollection[0];
+                _selectedDevice = _deviceCollection.FirstOrDefault(x => x.Name == deviceName);
+                if (_selectedDevice != null)
+                    _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
 
                 if (_deviceService != null)
                 {

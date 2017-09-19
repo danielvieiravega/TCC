@@ -8,7 +8,7 @@
     xmlns:controls="using:WinRTXamlToolkit.Controls"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ButtonDisabledBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource CalendarDatePickerLightDismissOverlayBackground}">
         <Button Name="BtnStart"  Content="Start" HorizontalAlignment="Left" Margin="682,331,0,0" VerticalAlignment="Top" Click="BtnStart_Click" Width="56"/>
         <Button x:Name="BtnClose"  Content="Close" HorizontalAlignment="Left" Margin="682,390,0,0" VerticalAlignment="Top" Click="BtnClose_Click"/>
         <Grid HorizontalAlignment="Left" Height="412" Margin="10,10,0,0" VerticalAlignment="Top" Width="350">
@@ -47,7 +47,7 @@
                 <TextBlock x:Name="TxtFuelPressure"  TextWrapping="Wrap" Text="0 kPa" Margin="11.8,16.8,6,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
             </Border>
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="168,348,0,0" VerticalAlignment="Top" Width="85">
-                <TextBlock x:Name="TxtThrotlePosition"  TextWrapping="Wrap" Text="100 %" Margin="23.8,16.8,17,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
+                <TextBlock x:Name="TxtThrotlePosition"  TextWrapping="Wrap" Text="0 %" Margin="23.8,16.8,17,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
             </Border>
             <TextBlock x:Name="LblPressure" HorizontalAlignment="Left" Margin="76,349,0,0" TextWrapping="Wrap" Text="Pressão Combustível" VerticalAlignment="Top" FontSize="9"/>
             <TextBlock x:Name="LblThrotlePosition" HorizontalAlignment="Left" Margin="173,349,0,0" TextWrapping="Wrap" Text="Posição acelerador" VerticalAlignment="Top" FontSize="9"/>

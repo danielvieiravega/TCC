@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCC", "TCC\TCC.csproj", "{285D04BB-C677-4D0B-AE4A-DFF3BC848E48}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODBDriver", "TCC.ODBDriver\ODBDriver.csproj", "{C0D18F05-D1C9-463A-90BB-4955B8C00055}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sim800Driver", "Sim800Driver\Sim800Driver.csproj", "{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,8 +57,27 @@ Global
 		{C0D18F05-D1C9-463A-90BB-4955B8C00055}.Release|x64.Build.0 = Release|x64
 		{C0D18F05-D1C9-463A-90BB-4955B8C00055}.Release|x86.ActiveCfg = Release|x86
 		{C0D18F05-D1C9-463A-90BB-4955B8C00055}.Release|x86.Build.0 = Release|x86
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Debug|ARM.ActiveCfg = Debug|ARM
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Debug|ARM.Build.0 = Debug|ARM
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Debug|x64.ActiveCfg = Debug|x64
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Debug|x64.Build.0 = Debug|x64
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Debug|x86.ActiveCfg = Debug|x86
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Debug|x86.Build.0 = Debug|x86
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Release|ARM.ActiveCfg = Release|ARM
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Release|ARM.Build.0 = Release|ARM
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Release|x64.ActiveCfg = Release|x64
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Release|x64.Build.0 = Release|x64
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Release|x86.ActiveCfg = Release|x86
+		{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AD093D6C-8651-4014-BADB-0A7202CB1130}
 	EndGlobalSection
 EndGlobal

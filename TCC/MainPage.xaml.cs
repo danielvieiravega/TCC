@@ -22,12 +22,6 @@ namespace TCC
             InitializeComponent();            
         }
         
-        public class Speed
-        {
-            public DateTime Date { get; set; }
-            public double Value { get; set; }
-        }
-
         public void DispatcherTimerSetup()
         {
             _dispatcherTimer = new DispatcherTimer();
@@ -59,7 +53,7 @@ namespace TCC
                     GaugeRpm.Value = rpm;
                     TxtTempEngine.Text = engineTemp + " °C";
                     TxtTempIntake.Text = intakeTemp + " °C";
-                    TxtFuelPressure.Text = fuelPres + " KpA";
+                    TxtFuelPressure.Text = fuelPres + " kPa";
                     TxtThrotlePosition.Text = (int)throtlePos + " %";
 
                     try
@@ -115,6 +109,11 @@ namespace TCC
             //TxtThrotlePosition.Text = value + " %";
 
             //value += 2;
+        }
+
+        public void ConfigureSim800()
+        {
+            
         }
     }
 }
