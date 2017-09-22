@@ -1,4 +1,6 @@
 ﻿using System;
+using Windows.Devices.Enumeration;
+using Windows.Devices.SerialCommunication;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -13,15 +15,17 @@ namespace TCC
         private DispatcherTimer _dispatcherTimer;
         public bool IsClosed { get; set; }
         private readonly ObdDriver _obdDriver = new ObdDriver();
+        private readonly Sim800Driver.Sim800Driver _sim800Driver = new Sim800Driver.Sim800Driver(); 
         private readonly ThingSpeakClient _thingSpeakClient = new ThingSpeakClient(false);
         private const string WriteApiKey = "DM63F2BD1CS70GJC";
         
         public MainPage()
         {
             IsClosed = true;
-            InitializeComponent();            
+            InitializeComponent();
+            
         }
-        
+
         public void DispatcherTimerSetup()
         {
             _dispatcherTimer = new DispatcherTimer();
@@ -75,18 +79,26 @@ namespace TCC
 
         private async void BtnStart_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (await _obdDriver.InitializeConnection())
-                {
-                    DispatcherTimerSetup();
-                    IsClosed = false;
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            var xxx = await _sim800Driver.InitializeConnection();
+
+            //var xxx = new xxx();
+            //await xxx.Initialise(9600);
+
+            //xxx.SendBytes("AT+CMGF=?\r");
+
+            //InitSerial();
+            //try
+            //{
+            //    if (await _obdDriver.InitializeConnection("xxx"))
+            //    {
+            //        DispatcherTimerSetup();
+            //        IsClosed = false;
+            //    }
+            //}
+            //catch (Exception)
+            //{
+            //    // ignored
+            //}
         }
 
         ~MainPage()
@@ -110,10 +122,6 @@ namespace TCC
 
             //value += 2;
         }
-
-        public void ConfigureSim800()
-        {
-            
-        }
+        
     }
 }

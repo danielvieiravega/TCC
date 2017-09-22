@@ -138,6 +138,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sim800Driver\Sim800Driver.csproj">
+      <Project>{c9909041-1a97-4aaa-9cb7-52b7de8eafd1}</Project>
+      <Name>Sim800Driver</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TCC.ODBDriver\ODBDriver.csproj">
       <Project>{c0d18f05-d1c9-463a-90bb-4955b8c00055}</Project>
       <Name>ODBDriver</Name>

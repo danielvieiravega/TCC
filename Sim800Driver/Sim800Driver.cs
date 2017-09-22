@@ -15,7 +15,7 @@ namespace Sim800Driver
         public async Task<bool> InitializeConnection()
         {
             var result = false;
-            var filter = SerialDevice.GetDeviceSelector("COM5");
+            var filter = SerialDevice.GetDeviceSelector("UART0");
             var devices = await DeviceInformation.FindAllAsync(filter);
             if (devices.Any())
             {
@@ -30,9 +30,25 @@ namespace Sim800Driver
                     serialDevice.Parity = SerialParity.None;
                     serialDevice.Handshake = SerialHandshake.None;
 
-                    _reader = new DataReader(serialDevice.InputStream);
+                    _reader = new DataReader(serialDevice.InputStream)
+                    {
+                        InputStreamOptions = InputStreamOptions.Partial
+                    };
                     _writer = new DataWriter(serialDevice.OutputStream);
 
+                    try
+                    {
+                        await WriteAsync("ATI\r");
+                        while (true)
+                        {
+                            await ReadAsync();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        serialDevice.Dispose();
+                    }
+                   
                     result = true;
                 }
             }
@@ -40,20 +56,39 @@ namespace Sim800Driver
             return result;
         }
 
-        private async Task WriteAsync(string content)
+
+        private async Task<string> ReadAsync()
         {
-            //Task<UInt32> storeAsyncTask;
+            var result = "nothing";
 
-            //// ...
+            const uint readBufferLength = 1024;
 
-            //// Load the text from the sendText input text box to the dataWriter object
-            //_writer.WriteString(content);
+           var loadAsyncTask = _reader.LoadAsync(readBufferLength).AsTask();
+ 
+            var bytesRead = await loadAsyncTask;
 
-            //// Launch an async task to complete the write operation
-            //storeAsyncTask = dataWriteObject.StoreAsync().AsTask();
+            if (bytesRead > 0)
+            {
+                result = _reader.ReadString(bytesRead);
+            }
 
-            //// ...    
+            return result;
         }
 
+        private async Task<bool> WriteAsync(string command)
+        {
+            var result = false;
+            _writer.WriteString(command);
+            
+            var storeAsyncTask = _writer.StoreAsync().AsTask();
+
+            var bytesWritten = await storeAsyncTask;
+            if (bytesWritten > 0)
+            {
+                result = true;
+            }
+
+            return result;
+        }
     }
 }
