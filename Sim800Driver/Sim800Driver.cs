@@ -36,35 +36,56 @@ namespace Sim800Driver
                     };
                     _writer = new DataWriter(serialDevice.OutputStream);
 
-                    try
-                    {
-                        await WriteAsync("ATI\r");
-                        while (true)
-                        {
-                            await ReadAsync();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        serialDevice.Dispose();
-                    }
-                   
+                    await WriteAsync("ATI\r");
+                    await ReadAsync();
+
+                    //try
+                    //{
+                    //    await WriteAsync("ATI\r");
+                    //    while (true)
+                    //    {
+                    //        await ReadAsync();
+                    //    }
+                    //}
+                    //catch (Exception e)
+                    //{
+                    //    serialDevice.Dispose();
+                    //}
+
                     result = true;
                 }
             }
 
             return result;
         }
+        
+        public async Task<string> ReadSms()
+        {
+            var result = "aaa";
+            try
+            {
+                //if (await WriteAsync("AT+CMGR=1\r"))
+                if(await WriteAsync("ATI\r"))
+                    result =  await ReadAsync();
+            }
+            catch (Exception e)
+            {
+                var afasfdsfdsa = e;
+            }
 
+            return result;
+        }
 
-        private async Task<string> ReadAsync()
+        public async Task<string> ReadAsync()
         {
             var result = "nothing";
 
             const uint readBufferLength = 1024;
 
            var loadAsyncTask = _reader.LoadAsync(readBufferLength).AsTask();
- 
+
+           // var bytesRead = _reader.LoadAsync(readBufferLength).AsTask().Result;
+
             var bytesRead = await loadAsyncTask;
 
             if (bytesRead > 0)

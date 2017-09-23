@@ -1,6 +1,4 @@
 ﻿using System;
-using Windows.Devices.Enumeration;
-using Windows.Devices.SerialCommunication;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -80,13 +78,9 @@ namespace TCC
         private async void BtnStart_Click(object sender, RoutedEventArgs e)
         {
             var xxx = await _sim800Driver.InitializeConnection();
+            var x = await _sim800Driver.ReadSms();
 
-            //var xxx = new xxx();
-            //await xxx.Initialise(9600);
-
-            //xxx.SendBytes("AT+CMGF=?\r");
-
-            //InitSerial();
+            var gggg = 55;
             //try
             //{
             //    if (await _obdDriver.InitializeConnection("xxx"))
