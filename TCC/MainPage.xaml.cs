@@ -21,7 +21,9 @@ namespace TCC
         {
             IsClosed = true;
             InitializeComponent();
-            
+
+            TxtSms.Text =
+                @"Os USRTs são utilizados em sistemas de comunicação para aplicações específicas, com sincronização feita por hardware e a muito curtas distâncias.";
         }
 
         public void DispatcherTimerSetup()
@@ -58,6 +60,9 @@ namespace TCC
                     TxtFuelPressure.Text = fuelPres + " kPa";
                     TxtThrotlePosition.Text = (int)throtlePos + " %";
 
+                    var sms = await _sim800Driver.ReadSms();
+                    //if (sms != "nothing")
+
                     try
                     {
                         var dataFeed = new ThingSpeakFeed { Field1 = speed.ToString(), Field2 = rpm.ToString() };
@@ -77,13 +82,24 @@ namespace TCC
 
         private async void BtnStart_Click(object sender, RoutedEventArgs e)
         {
-            var xxx = await _sim800Driver.InitializeConnection();
-            var x = await _sim800Driver.ReadSms();
+            try
+            {
+                var xxx = await _sim800Driver.InitializeConnection();
+                var x = await _sim800Driver.ReadSms();
 
-            var gggg = 55;
+
+                var gggg = 55;
+            }
+            catch (Exception exception)
+            {
+                var x = 12;
+               
+            }
+            
+
             //try
             //{
-            //    if (await _obdDriver.InitializeConnection("xxx"))
+            //    if (await _obdDriver.InitializeConnection("danielvv"))
             //    {
             //        DispatcherTimerSetup();
             //        IsClosed = false;
@@ -100,21 +116,21 @@ namespace TCC
             _obdDriver.Close().Wait();
         }
 
-        //private static int value = 0;
+        private static int value = 0;
 
         private async void BtnClose_Click(object sender, RoutedEventArgs e)
         {
             await _obdDriver.Close();
             IsClosed = true;
 
-            //TxtTempEngine.Text = value + " °C";
-            //TxtTempIntake.Text = value + " °C";
-            //GaugeRpm.Value = value;
-            //GaugeSpeed.Value = value;
-            //TxtFuelPressure.Text = value + " KpA";
-            //TxtThrotlePosition.Text = value + " %";
+            TxtTempEngine.Text = value + " °C";
+            TxtTempIntake.Text = value + " °C";
+            GaugeRpm.Value = value;
+            GaugeSpeed.Value = value;
+            TxtFuelPressure.Text = value + " KpA";
+            TxtThrotlePosition.Text = value + " %";
 
-            //value += 2;
+            value += 2;
         }
         
     }

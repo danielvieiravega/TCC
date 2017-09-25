@@ -36,22 +36,6 @@ namespace Sim800Driver
                     };
                     _writer = new DataWriter(serialDevice.OutputStream);
 
-                    await WriteAsync("ATI\r");
-                    await ReadAsync();
-
-                    //try
-                    //{
-                    //    await WriteAsync("ATI\r");
-                    //    while (true)
-                    //    {
-                    //        await ReadAsync();
-                    //    }
-                    //}
-                    //catch (Exception e)
-                    //{
-                    //    serialDevice.Dispose();
-                    //}
-
                     result = true;
                 }
             }
@@ -61,12 +45,11 @@ namespace Sim800Driver
         
         public async Task<string> ReadSms()
         {
-            var result = "aaa";
+            var result = "nothing";
             try
             {
-                //if (await WriteAsync("AT+CMGR=1\r"))
-                if(await WriteAsync("ATI\r"))
-                    result =  await ReadAsync();
+                await WriteAsync("ATI\r");
+                result =  await ReadAsync();
             }
             catch (Exception e)
             {
@@ -80,18 +63,17 @@ namespace Sim800Driver
         {
             var result = "nothing";
 
-            const uint readBufferLength = 1024;
-
-           var loadAsyncTask = _reader.LoadAsync(readBufferLength).AsTask();
-
-           // var bytesRead = _reader.LoadAsync(readBufferLength).AsTask().Result;
-
+            var loadAsyncTask = _reader.LoadAsync(1024).AsTask();
+            
             var bytesRead = await loadAsyncTask;
 
             if (bytesRead > 0)
             {
                 result = _reader.ReadString(bytesRead);
             }
+
+            //var bytes = await _reader.LoadAsync(1024);
+            //var buf = _reader.ReadString(bytes);
 
             return result;
         }
@@ -100,7 +82,7 @@ namespace Sim800Driver
         {
             var result = false;
             _writer.WriteString(command);
-            
+
             var storeAsyncTask = _writer.StoreAsync().AsTask();
 
             var bytesWritten = await storeAsyncTask;
@@ -108,6 +90,10 @@ namespace Sim800Driver
             {
                 result = true;
             }
+
+            //var x =  _writer.WriteString(command);
+            //var xxx = await _writer.StoreAsync();
+
 
             return result;
         }
