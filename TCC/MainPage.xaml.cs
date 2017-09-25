@@ -65,7 +65,15 @@ namespace TCC
 
                     try
                     {
-                        var dataFeed = new ThingSpeakFeed { Field1 = speed.ToString(), Field2 = rpm.ToString() };
+                        var dataFeed = new ThingSpeakFeed
+                        {
+                            Field1 = speed.ToString(),
+                            Field2 = rpm.ToString(),
+                            Field3 = fuelPres.ToString(),
+                            Field4 = engineTemp.ToString(),
+                            Field5 = throtlePos.ToString(),
+                            Field6 = intakeTemp.ToString()
+                        };
                         await _thingSpeakClient.UpdateFeedAsync(WriteApiKey, dataFeed);
                     }
                     catch (Exception)
@@ -120,8 +128,14 @@ namespace TCC
 
         private async void BtnClose_Click(object sender, RoutedEventArgs e)
         {
-            await _obdDriver.Close();
-            IsClosed = true;
+            //await _obdDriver.Close();
+            //IsClosed = true;
+            if (IsClosed)
+            {
+                DispatcherTimerSetup();
+                IsClosed = false;
+            }
+              
 
             TxtTempEngine.Text = value + " °C";
             TxtTempIntake.Text = value + " °C";
