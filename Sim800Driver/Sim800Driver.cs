@@ -24,6 +24,8 @@ namespace Sim800Driver
 
                 if (serialDevice != null)
                 {
+                    serialDevice.WriteTimeout = TimeSpan.FromMilliseconds(1000);    //mS before a time-out occurs when a write operation does not finish (default=InfiniteTimeout).
+                    serialDevice.ReadTimeout = TimeSpan.FromMilliseconds(1000);
                     serialDevice.BaudRate = 9600;
                     serialDevice.StopBits = SerialStopBitCount.One;
                     serialDevice.DataBits = 8;
@@ -48,8 +50,24 @@ namespace Sim800Driver
             var result = "nothing";
             try
             {
+                var number = "+5551989108383";
+
                 await WriteAsync("ATI\r");
-                result =  await ReadAsync();
+                result = await ReadAsync();
+                await WriteAsync("AT+CMGF=1\r");
+                await Task.Delay(TimeSpan.FromSeconds(1));
+                result = await ReadAsync();
+                //await WriteAsync("AT+CMGS=\"" + "51989108383" + "\"" + "\r");
+                await WriteAsync("AT+CMGS=\"" + number + "\"\r\n");
+                await Task.Delay(TimeSpan.FromSeconds(1));
+                result = await ReadAsync();
+                await WriteAsync("enviado da minha rasp " + "\x1A");
+                await Task.Delay(TimeSpan.FromSeconds(1));
+                result = await ReadAsync();
+                await WriteAsync("ATI\r");
+                result = await ReadAsync();
+                var aaa = 5;
+
             }
             catch (Exception e)
             {
@@ -86,10 +104,29 @@ namespace Sim800Driver
             var storeAsyncTask = _writer.StoreAsync().AsTask();
 
             var bytesWritten = await storeAsyncTask;
+            
             if (bytesWritten > 0)
             {
                 result = true;
             }
+
+            //try
+            //{
+            //    _reader.InputStreamOptions = InputStreamOptions.Partial;
+            //    var loadAsyncTask = _reader.LoadAsync(1024).AsTask();
+
+            //    var bytesRead = await loadAsyncTask;
+
+            //    if (bytesRead > 0)
+            //    {
+            //        var xxx = _reader.ReadString(bytesRead);
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    var agaaf = e;
+            //}
+            
 
             //var x =  _writer.WriteString(command);
             //var xxx = await _writer.StoreAsync();
