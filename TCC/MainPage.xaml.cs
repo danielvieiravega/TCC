@@ -5,6 +5,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using TCC.ODBDriver;
 using ThingSpeakWinRT;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace TCC
 {
@@ -85,8 +87,8 @@ namespace TCC
                     var throtlePos = await _obdDriver.GetThrottlePosition();
                     var fuelPres = await _obdDriver.GetFuelPressure();
 
-                    GaugeSpeed.Value = speed;
-                    GaugeRpm.Value = rpm;
+                    //GaugeSpeed.Value = speed;
+                    //GaugeRpm.Value = rpm;
                     TxtTempEngine.Text = engineTemp + " °C";
                     TxtTempIntake.Text = intakeTemp + " °C";
                     TxtFuelPressure.Text = fuelPres + " kPa";
@@ -173,7 +175,7 @@ namespace TCC
 
         private static int value = 0;
 
-        private async void BtnClose_Click(object sender, RoutedEventArgs e)
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
             //await _obdDriver.Close();
             //IsClosed = true;
@@ -182,12 +184,15 @@ namespace TCC
             //    DispatcherTimerSetup();
             //    IsClosed = false;
             //}
-              
+
+            RadialBarGaugeSpeed.Value = value;
+            MarkerGaugeSpeed.Value = value;
+            TxtSpeed.Text = value + " km/h";
 
             TxtTempEngine.Text = value + " °C";
             TxtTempIntake.Text = value + " °C";
-            GaugeRpm.Value = value;
-            GaugeSpeed.Value = value;
+            //GaugeRpm.Value = value;
+            //GaugeSpeed.Value = value;
             TxtFuelPressure.Text = value + " KpA";
             TxtThrotlePosition.Text = value + " %";
 

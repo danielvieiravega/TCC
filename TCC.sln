@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCC", "TCC\TCC.csproj", "{285D04BB-C677-4D0B-AE4A-DFF3BC848E48}"
 EndProject
@@ -22,6 +22,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{285D04BB-C677-4D0B-AE4A-DFF3BC848E48}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{285D04BB-C677-4D0B-AE4A-DFF3BC848E48}.Debug|Any CPU.Build.0 = Debug|x86
+		{285D04BB-C677-4D0B-AE4A-DFF3BC848E48}.Debug|Any CPU.Deploy.0 = Debug|x86
 		{285D04BB-C677-4D0B-AE4A-DFF3BC848E48}.Debug|ARM.ActiveCfg = Debug|ARM
 		{285D04BB-C677-4D0B-AE4A-DFF3BC848E48}.Debug|ARM.Build.0 = Debug|ARM
 		{285D04BB-C677-4D0B-AE4A-DFF3BC848E48}.Debug|ARM.Deploy.0 = Debug|ARM
