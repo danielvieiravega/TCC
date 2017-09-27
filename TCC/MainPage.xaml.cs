@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -22,8 +23,10 @@ namespace TCC
             IsClosed = true;
             InitializeComponent();
 
-            TxtSms.Text =
-                @"Os USRTs são utilizados em sistemas de comunicação para aplicações específicas, com sincronização feita por hardware e a muito curtas distâncias.";
+            TxtSms.Text = string.Empty;
+
+            //TxtSms.Text =
+            //    @"Os USRTs são utilizados em sistemas de comunicação para aplicações específicas, com sincronização feita por hardware e a muito curtas distâncias.";
         }
 
         public void DispatcherTimerSetup()
@@ -33,7 +36,36 @@ namespace TCC
             _dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
             _dispatcherTimer.Start();
         }
-        
+
+        public void DispatcherTimerSetupSms()
+        {
+            _dispatcherTimer = new DispatcherTimer();
+            _dispatcherTimer.Tick += DispatcherTimer_Tick_Sms;
+            _dispatcherTimer.Interval = new TimeSpan(0, 0, 10);
+            _dispatcherTimer.Start();
+        }
+
+        private async void DispatcherTimer_Tick_Sms(object sender, object e)
+        {
+            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                var messages = await _sim800Driver.ReadSms();
+                var sms = messages.LastOrDefault();
+                if (sms != null)
+                {
+                    var isSmsRead = sms.Status.Contains("READ");
+                    if (isSmsRead)
+                    {
+                        await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            TxtSms.Text = string.Empty;
+                            TxtSms.Text = $"De: {sms.Sender}\nMensagem: {sms.Message}";
+                        });
+                    }
+                }
+            });
+        }
+
         private async void DispatcherTimer_Tick(object sender, object e)
         {
             if (IsClosed)
@@ -92,15 +124,30 @@ namespace TCC
         {
             try
             {
-                var xxx = await _sim800Driver.InitializeConnection();
-                var x = await _sim800Driver.ReadSms();
+                if (await _sim800Driver.InitializeConnection())
+                {
+                    DispatcherTimerSetupSms();
+                    //var messages = await _sim800Driver.ReadSms();
+                    //var sms = messages.FirstOrDefault();
+                    //if (sms != null)
+                    //{
+                    //    var isSmsRead = sms.Status.Contains("READ");
+                    //    if (isSmsRead)
+                    //    {
+                    //        await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    //        {
+                    //            TxtSms.Text = $"De: {sms.Sender}\nMensagem: {sms.Message}";
+                    //        });
+                    //    }
+                    //}
+                }
 
-
-                var gggg = 55;
+                //var x = await _sim800Driver.SendSms("Enviando novamente um SMS", "51989108383");
+                
             }
             catch (Exception exception)
             {
-                var x = 12;
+                var x = exception;
                
             }
             
@@ -130,11 +177,11 @@ namespace TCC
         {
             //await _obdDriver.Close();
             //IsClosed = true;
-            if (IsClosed)
-            {
-                DispatcherTimerSetup();
-                IsClosed = false;
-            }
+            //if (IsClosed)
+            //{
+            //    DispatcherTimerSetup();
+            //    IsClosed = false;
+            //}
               
 
             TxtTempEngine.Text = value + " °C";
@@ -146,6 +193,13 @@ namespace TCC
 
             value += 2;
         }
-        
+
+        private async void BtnClearSms_Click(object sender, RoutedEventArgs e)
+        {
+            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                TxtSms.Text = string.Empty;
+            });
+        }
     }
 }

@@ -53,6 +53,7 @@
             <Button x:Name="BtnClose"  Content="Close" HorizontalAlignment="Left" Margin="531,360,0,0" VerticalAlignment="Top" Click="BtnClose_Click"/>
             <TextBlock Name="TxtSms" HorizontalAlignment="Left" Margin="412,33,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="150" Width="298"/>
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="150" Margin="412,33,0,0" VerticalAlignment="Top" Width="298"/>
+            <Button Name="BtnClearSms" Content="Limpar" HorizontalAlignment="Left" Margin="414,193,0,0" VerticalAlignment="Top" Click="BtnClearSms_Click"/>
         </Grid>
 
     </Grid>

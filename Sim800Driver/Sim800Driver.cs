@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.SerialCommunication;
@@ -44,37 +47,85 @@ namespace Sim800Driver
 
             return result;
         }
-        
-        public async Task<string> ReadSms()
+
+        public async Task<bool> SendSms(string message, string phoneNumber)
         {
-            var result = "nothing";
+            var response = string.Empty;
+
+            await WriteAsync("AT\r");
+            response = await ReadAsync();
+
+            await WriteAsync("AT+CMGF=1\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+            
+            await WriteAsync("AT+CMGS=\"" + phoneNumber + "\"" + "\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+
+            await WriteAsync(message + char.ConvertFromUtf32(26) + "\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+
+            await WriteAsync("AT\r");
+            response = await ReadAsync();
+
+            return response.Contains("OK");
+        }
+        
+        public async Task<ShortMessageCollection> ReadSms()
+        {
+            var result = string.Empty;
+
+            await WriteAsync("AT\r");
+            result = await ReadAsync();
+
+            await WriteAsync("AT+CMGF=1\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            result = await ReadAsync();
+
+            await WriteAsync("AT+CPMS=\"SM\"" + "\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            result = await ReadAsync();
+
+            await WriteAsync("AT+CMGL=\"ALL\"" + "\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            result = await ReadAsync();
+
+            return ParseMessages(result);
+        }
+
+        public ShortMessageCollection ParseMessages(string input)
+        {
+            var messages = new ShortMessageCollection();
             try
             {
-                var number = "+5551989108383";
+                var r = new Regex(@"\+CMGL: (\d+),""(.+)"",""(.+)"",(.*),""(.+)""\r\n(.+)\r\n");
+                var m = r.Match(input);
+                while (m.Success)
+                {
+                    var msg = new ShortMessage
+                    {
+                        Index = m.Groups[1].Value,
+                        Status = m.Groups[2].Value,
+                        Sender = m.Groups[3].Value,
+                        Alphabet = m.Groups[4].Value,
+                        Sent = m.Groups[5].Value,
+                        Message = m.Groups[6].Value
+                    };
 
-                await WriteAsync("ATI\r");
-                result = await ReadAsync();
-                await WriteAsync("AT+CMGF=1\r");
-                await Task.Delay(TimeSpan.FromSeconds(1));
-                result = await ReadAsync();
-                //await WriteAsync("AT+CMGS=\"" + "51989108383" + "\"" + "\r");
-                await WriteAsync("AT+CMGS=\"" + number + "\"\r\n");
-                await Task.Delay(TimeSpan.FromSeconds(1));
-                result = await ReadAsync();
-                await WriteAsync("enviado da minha rasp " + "\x1A");
-                await Task.Delay(TimeSpan.FromSeconds(1));
-                result = await ReadAsync();
-                await WriteAsync("ATI\r");
-                result = await ReadAsync();
-                var aaa = 5;
+                    messages.Add(msg);
+
+                    m = m.NextMatch();
+                }
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                var afasfdsfdsa = e;
+                throw ex;
             }
-
-            return result;
+            
+            return messages;
         }
 
         public async Task<string> ReadAsync()
@@ -134,5 +185,57 @@ namespace Sim800Driver
 
             return result;
         }
+
+    }
+
+    public class ShortMessage
+    {
+
+        #region Private Variables
+        private string index;
+        private string status;
+        private string sender;
+        private string alphabet;
+        private string sent;
+        private string message;
+        #endregion
+
+        #region Public Properties
+        public string Index
+        {
+            get { return index; }
+            set { index = value; }
+        }
+        public string Status
+        {
+            get { return status; }
+            set { status = value; }
+        }
+        public string Sender
+        {
+            get { return sender; }
+            set { sender = value; }
+        }
+        public string Alphabet
+        {
+            get { return alphabet; }
+            set { alphabet = value; }
+        }
+        public string Sent
+        {
+            get { return sent; }
+            set { sent = value; }
+        }
+        public string Message
+        {
+            get { return message; }
+            set { message = value; }
+        }
+        #endregion
+
+    }
+
+    public class ShortMessageCollection : List<ShortMessage>
+    {
     }
 }
