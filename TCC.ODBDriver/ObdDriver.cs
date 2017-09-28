@@ -29,8 +29,8 @@ namespace TCC.ODBDriver
 
             if (_deviceCollection.Count > 0)
             {
-                //_selectedDevice = _deviceCollection[0];
-                _selectedDevice = _deviceCollection.FirstOrDefault(x => x.Name == deviceName);
+                _selectedDevice = _deviceCollection[0];
+                //_selectedDevice = _deviceCollection.FirstOrDefault(x => x.Name == deviceName);
                 if (_selectedDevice != null)
                     _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
 

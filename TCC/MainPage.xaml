@@ -4,56 +4,131 @@
     xmlns:local="using:TCC"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:DataVisualization="using:Telerik.UI.Xaml.Controls.DataVisualization"
+    xmlns:dataVisualization="using:Telerik.UI.Xaml.Controls.DataVisualization"
     x:Class="TCC.MainPage"
-    mc:Ignorable="d">
+    mc:Ignorable="d" Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource AppBarToggleButtonCheckedDisabledForegroundThemeBrush}">
         <Grid HorizontalAlignment="Left" Height="412" Margin="10,10,0,0" VerticalAlignment="Top" Width="748">
-
-
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="383*"/>
+                <ColumnDefinition Width="365*"/>
+            </Grid.ColumnDefinitions>
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,229,0,0" VerticalAlignment="Top" Width="178">
                 <TextBlock x:Name="TxtTempEngine"  TextWrapping="Wrap" Text="0 °C" Margin="78.8,18.8,58.8,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
             </Border>
-            <TextBlock x:Name="LblTempEngine" HorizontalAlignment="Left" Margin="96,229,0,0" TextWrapping="Wrap" Text="Temperatura do motor" VerticalAlignment="Top" FontSize="14"/>
-            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,291,0,0" VerticalAlignment="Top" Width="178">
+            <TextBlock Grid.Column="0" x:Name="LblTempEngine" HorizontalAlignment="Left" Margin="96,229,0,0" TextWrapping="Wrap" Text="Temperatura do motor" VerticalAlignment="Top" FontSize="14"/>
+            <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,291,0,0" VerticalAlignment="Top" Width="178">
                 <TextBlock x:Name="TxtTempIntake"  TextWrapping="Wrap" Text="0 °C" Margin="80.8,16.8,56.8,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
             </Border>
-            <TextBlock x:Name="LblTempIntake" HorizontalAlignment="Left" Margin="100,291,0,0" TextWrapping="Wrap" Text="Temperatura do ar" VerticalAlignment="Top" FontSize="14"/>
+            <TextBlock Grid.Column="0" x:Name="LblTempIntake" HorizontalAlignment="Left" Margin="100,291,0,0" TextWrapping="Wrap" Text="Temperatura do ar" VerticalAlignment="Top" FontSize="14"/>
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,348,0,0" VerticalAlignment="Top" Width="85">
                 <TextBlock x:Name="TxtFuelPressure"  TextWrapping="Wrap" Text="0 kPa" Margin="11.8,16.8,6,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
             </Border>
-            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="168,348,0,0" VerticalAlignment="Top" Width="85">
+            <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="168,348,0,0" VerticalAlignment="Top" Width="85">
                 <TextBlock x:Name="TxtThrotlePosition"  TextWrapping="Wrap" Text="0 %" Margin="23.8,16.8,17,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
             </Border>
-            <TextBlock x:Name="LblPressure" HorizontalAlignment="Left" Margin="76,349,0,0" TextWrapping="Wrap" Text="Pressão Combustível" VerticalAlignment="Top" FontSize="9"/>
-            <TextBlock x:Name="LblThrotlePosition" HorizontalAlignment="Left" Margin="173,349,0,0" TextWrapping="Wrap" Text="Posição acelerador" VerticalAlignment="Top" FontSize="9"/>
-            <Button x:Name="BtnStart"  Content="Start" HorizontalAlignment="Left" Margin="531,301,0,0" VerticalAlignment="Top" Click="BtnStart_Click" Width="56"/>
-            <Button x:Name="BtnClose"  Content="Close" HorizontalAlignment="Left" Margin="531,360,0,0" VerticalAlignment="Top" Click="BtnClose_Click"/>
-            <TextBlock x:Name="TxtSms" HorizontalAlignment="Left" Margin="412,33,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="150" Width="298"/>
-            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="150" Margin="412,33,0,0" VerticalAlignment="Top" Width="298"/>
-            <Button x:Name="BtnClearSms" Content="Limpar" HorizontalAlignment="Left" Margin="414,193,0,0" VerticalAlignment="Top" Click="BtnClearSms_Click"/>
+            <TextBlock Grid.Column="0" x:Name="LblPressure" HorizontalAlignment="Left" Margin="76,349,0,0" TextWrapping="Wrap" Text="Pressão Combustível" VerticalAlignment="Top" FontSize="9"/>
+            <TextBlock Grid.Column="0" x:Name="LblThrotlePosition" HorizontalAlignment="Left" Margin="173,349,0,0" TextWrapping="Wrap" Text="Posição acelerador" VerticalAlignment="Top" FontSize="9"/>
+            <TextBlock x:Name="TxtSms" HorizontalAlignment="Left" Margin="29.2,33,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="150" Width="298" Grid.Column="1"/>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="150" Margin="29.2,33,0,0" VerticalAlignment="Top" Width="298" Grid.Column="1"/>
+            <Button x:Name="BtnClearSms" Content="Limpar" HorizontalAlignment="Left" Margin="31.2,193,0,0" VerticalAlignment="Top" Click="BtnClearSms_Click" Grid.Column="1"/>
 
-            <DataVisualization:RadRadialGauge Name="GaugeSpeed" MinValue="0" MaxValue="200" LabelStep="20" Margin="-29,38,517,0" TickStep="10" DataVisualization:RadRadialGauge.MinAngle="-50" DataVisualization:RadRadialGauge.MaxAngle="250" VerticalAlignment="Top" LabelRadiusScale="1.10" Height="121">
-                <DataVisualization:RadRadialGauge.LabelTemplate>
+            <dataVisualization:RadRadialGauge Grid.Column="0" Name="GaugeSpeed" MinValue="0" MaxValue="200" LabelStep="20" Margin="-47,42,152.2,0" TickStep="10" MinAngle="-50" MaxAngle="250" VerticalAlignment="Top" LabelRadiusScale="1.15" Height="141">
+                <dataVisualization:RadRadialGauge.LabelTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" Margin="0 0 0 0" FontSize="15" Foreground="#595959"></TextBlock>
+                    </DataTemplate>
+                </dataVisualization:RadRadialGauge.LabelTemplate>
+                <dataVisualization:SegmentedRadialGaugeIndicator  StartValue="0" Value="200">
+                    <dataVisualization:BarIndicatorSegment Thickness="2" Stroke="Brown" Length="100"/>
+                    <dataVisualization:BarIndicatorSegment Thickness="2" Stroke="Red" Length="10" />
+                </dataVisualization:SegmentedRadialGaugeIndicator>
+                <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeSpeed" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
+                <dataVisualization:MarkerGaugeIndicator Name="MarkerGaugeSpeed" Value="0" Content="*" FontFamily="Segoe UI" FontSize="17" Foreground="Red" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
+            </dataVisualization:RadRadialGauge>
+            <TextBlock Grid.Column="0" Name="TxtSpeed" Text="0 Km/h" FontSize="15" Margin="60,100,254.2,281" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="69" FontFamily="DS-Digital" FontWeight="Bold"/>
+
+            <dataVisualization:RadRadialGauge Name="GaugeRpm" MinValue="0" MaxValue="8" LabelStep="1" Margin="176,42,323,0" TickStep="1" MinAngle="-30" MaxAngle="210" VerticalAlignment="Top" LabelRadiusScale="1.15" Height="136" Grid.ColumnSpan="2"
+                                              Grid.Column="0">
+                <dataVisualization:RadRadialGauge.LabelTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding}" Margin="-1 0 0 0" FontSize="15" Foreground="#595959"></TextBlock>
                     </DataTemplate>
-                </DataVisualization:RadRadialGauge.LabelTemplate>
-                <DataVisualization:SegmentedRadialGaugeIndicator  StartValue="0" Value="200">
-                    <DataVisualization:BarIndicatorSegment Thickness="2" Stroke="#595959" Length="100"/>
-                    <DataVisualization:BarIndicatorSegment Thickness="2" Stroke="Red" Length="10" />
-                </DataVisualization:SegmentedRadialGaugeIndicator>
-                <DataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeSpeed" Value="0" Brush="Gray" Thickness="12" DataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
-                <DataVisualization:RadialBarGaugeIndicator Value="{Binding Expenses}" IsAnimated="True" Brush="Black" Thickness="12" DataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
-                <DataVisualization:MarkerGaugeIndicator Name="MarkerGaugeSpeed" Value="0" Content="*" FontFamily="Segoe UI" FontSize="17" Foreground="Red" DataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
-            </DataVisualization:RadRadialGauge>
-            <TextBlock Name="TxtSpeed" Text="0 Km/h" FontSize="15" Margin="79,88,604,298" VerticalAlignment="Center" HorizontalAlignment="Center" Height="26" Width="65"/>
+                </dataVisualization:RadRadialGauge.LabelTemplate>
+                <dataVisualization:SegmentedRadialGaugeIndicator  StartValue="0" Value="8">
+                    <dataVisualization:BarIndicatorSegment Thickness="2" Stroke="DarkSlateGray" Length="100"/>
+                    <dataVisualization:BarIndicatorSegment Thickness="2" Stroke="Red" Length="10" />
+                </dataVisualization:SegmentedRadialGaugeIndicator>
+                <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeRpm" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
+                <dataVisualization:MarkerGaugeIndicator Name="MarkerGaugeRpm" Value="0" Content="*" FontFamily="Segoe UI" FontSize="17" Foreground="Red" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
+            </dataVisualization:RadRadialGauge>
+            <TextBlock Grid.Column="0" Name="TxtRpm" Text="0 x 1000 rpm" FontSize="15" Margin="258,98,29.2,285" VerticalAlignment="Center" HorizontalAlignment="Center" Height="29" Width="96" FontFamily="DS-Digital" FontWeight="Bold"/>
 
+            <TextBlock Grid.Column="0" Name="TxtHour" HorizontalAlignment="Left" Margin="132,9,0,0" TextWrapping="Wrap" Text="09/27/2017 21:28:56" VerticalAlignment="Top" Width="142" Height="26" FontFamily="DS-Digital" FontWeight="Bold" FontSize="16" Foreground="Black"/>
         </Grid>
-
     </Grid>
 </Page>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
