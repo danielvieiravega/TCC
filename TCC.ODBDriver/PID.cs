@@ -10,6 +10,7 @@
         EngineTemperature = 0x05,
         FuelPressure = 0x0A,
         ThrottlePosition = 0x11,
-        IntakeAirTemperature = 0x0F
+        IntakeAirTemperature = 0x0F,
+        FuelTankLevelInput = 0x2F
     }
 }

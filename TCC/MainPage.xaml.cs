@@ -91,7 +91,7 @@ namespace TCC
                     var intakeTemp = await _obdDriver.GetIntakeAirTemperature();
                     var throtlePos = await _obdDriver.GetThrottlePosition();
                     var fuelPres = await _obdDriver.GetFuelPressure();
-                    
+                    var fuelTankLevel = await _obdDriver.GetFuelTankLevelInput();
 
                     RadialBarGaugeSpeed.Value = speed;
                     MarkerGaugeSpeed.Value = speed;
@@ -107,6 +107,8 @@ namespace TCC
                     TxtTempIntake.Text = intakeTemp + " °C";
                     TxtFuelPressure.Text = fuelPres + " kPa";
                     TxtThrotlePosition.Text = (int)throtlePos + " %";
+
+                    BarFuelLevel.Value = fuelTankLevel;
 
                     try
                     {

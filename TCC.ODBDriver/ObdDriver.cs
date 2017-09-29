@@ -229,6 +229,26 @@ namespace TCC.ODBDriver
             return result;
         }
 
+        public async Task<double> GetFuelTankLevelInput()
+        {
+            var result = 0.0;
+            try
+            {
+                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.FuelTankLevelInput));
+
+                if (HasValidLength(response) && response.Contains("412F"))
+                {
+                    result = ParseData(NormalizeResponse(response), PID.FuelTankLevelInput);
+                }
+            }
+            catch (Exception e)
+            {
+                LoggingServices.Instance.WriteLine<ObdDriver>($"Failure getting FuelTankLevelInput: {e.Message}", LogLevel.Warn);
+            }
+
+            return result;
+        }
+
         private static double ParseData(string response, PID pid)
         {
             var result = 0.0;
@@ -274,6 +294,12 @@ namespace TCC.ODBDriver
                         var intakeAirTemperatureHexString = response.Substring(4);
                         var intakeAirTemperature = Convert.ToInt32(intakeAirTemperatureHexString, 16);
                         result = Convert.ToDouble(intakeAirTemperature) - 40;
+                        break;
+
+                    case PID.FuelTankLevelInput:
+                        var fuelTankLevelHexString = response.Substring(4);
+                        var fuelTankLevel = Convert.ToInt32(fuelTankLevelHexString, 16);
+                        result = Convert.ToDouble(fuelTankLevel) * 100 / 255;
                         break;
 
                     default:

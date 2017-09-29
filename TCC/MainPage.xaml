@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dataVisualization="using:Telerik.UI.Xaml.Controls.DataVisualization"
     x:Class="TCC.MainPage"
-    mc:Ignorable="d" Loaded="Page_Loaded">
+    mc:Ignorable="d" Loaded="Page_Loaded" RequestedTheme="Dark">
 
     <Grid Background="{ThemeResource AppBarToggleButtonCheckedDisabledForegroundThemeBrush}">
         <Grid HorizontalAlignment="Left" Height="412" Margin="10,10,0,0" VerticalAlignment="Top" Width="748">
@@ -14,58 +14,90 @@
                 <ColumnDefinition Width="383*"/>
                 <ColumnDefinition Width="365*"/>
             </Grid.ColumnDefinitions>
-            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,229,0,0" VerticalAlignment="Top" Width="178">
-                <TextBlock x:Name="TxtTempEngine"  TextWrapping="Wrap" Text="0 °C" Margin="78.8,18.8,58.8,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
-            </Border>
-            <TextBlock Grid.Column="0" x:Name="LblTempEngine" HorizontalAlignment="Left" Margin="96,229,0,0" TextWrapping="Wrap" Text="Temperatura do motor" VerticalAlignment="Top" FontSize="14"/>
-            <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,291,0,0" VerticalAlignment="Top" Width="178">
-                <TextBlock x:Name="TxtTempIntake"  TextWrapping="Wrap" Text="0 °C" Margin="80.8,16.8,56.8,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
-            </Border>
-            <TextBlock Grid.Column="0" x:Name="LblTempIntake" HorizontalAlignment="Left" Margin="100,291,0,0" TextWrapping="Wrap" Text="Temperatura do ar" VerticalAlignment="Top" FontSize="14"/>
-            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="75,348,0,0" VerticalAlignment="Top" Width="85">
-                <TextBlock x:Name="TxtFuelPressure"  TextWrapping="Wrap" Text="0 kPa" Margin="11.8,16.8,6,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
-            </Border>
-            <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="44" Margin="168,348,0,0" VerticalAlignment="Top" Width="85">
-                <TextBlock x:Name="TxtThrotlePosition"  TextWrapping="Wrap" Text="0 %" Margin="23.8,16.8,17,8.8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="14"/>
-            </Border>
-            <TextBlock Grid.Column="0" x:Name="LblPressure" HorizontalAlignment="Left" Margin="76,349,0,0" TextWrapping="Wrap" Text="Pressão Combustível" VerticalAlignment="Top" FontSize="9"/>
-            <TextBlock Grid.Column="0" x:Name="LblThrotlePosition" HorizontalAlignment="Left" Margin="173,349,0,0" TextWrapping="Wrap" Text="Posição acelerador" VerticalAlignment="Top" FontSize="9"/>
-            <TextBlock x:Name="TxtSms" HorizontalAlignment="Left" Margin="29.2,33,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="150" Width="298" Grid.Column="1"/>
-            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="150" Margin="29.2,33,0,0" VerticalAlignment="Top" Width="298" Grid.Column="1"/>
-            <Button x:Name="BtnClearSms" Content="Limpar" HorizontalAlignment="Left" Margin="31.2,193,0,0" VerticalAlignment="Top" Click="BtnClearSms_Click" Grid.Column="1"/>
+            <TextBlock Grid.Column="0" x:Name="LblPressure" HorizontalAlignment="Left" Margin="76,229,0,0" TextWrapping="Wrap" Text="Pressão Combustível" VerticalAlignment="Top" FontSize="9"/>
+            <TextBlock Grid.Column="0" x:Name="LblThrotlePosition" HorizontalAlignment="Left" Margin="173,229,0,0" TextWrapping="Wrap" Text="Posição acelerador" VerticalAlignment="Top" FontSize="9"/>
+            <TextBlock x:Name="TxtSms" HorizontalAlignment="Left" Margin="28.8,33,0,0" TextWrapping="Wrap" Text="  Nenhum SMS a exibir no momento!" VerticalAlignment="Top" Height="115" Width="298" Grid.Column="1"/>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="115" Margin="28.8,33,0,0" VerticalAlignment="Top" Width="298" Grid.Column="1"/>
+            <Button x:Name="BtnClearSms" Content="Limpar" HorizontalAlignment="Left" Margin="144.8,161,0,0" VerticalAlignment="Top" Click="BtnClearSms_Click" Grid.Column="1" RenderTransformOrigin="1.164,0.475"/>
 
             <dataVisualization:RadRadialGauge Grid.Column="0" Name="GaugeSpeed" MinValue="0" MaxValue="200" LabelStep="20" Margin="-47,42,152.2,0" TickStep="10" MinAngle="-50" MaxAngle="250" VerticalAlignment="Top" LabelRadiusScale="1.15" Height="141">
                 <dataVisualization:RadRadialGauge.LabelTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding}" Margin="0 0 0 0" FontSize="15" Foreground="#595959"></TextBlock>
+                        <TextBlock Text="{Binding}" Margin="0 0 0 0" FontSize="15" Foreground="AliceBlue"></TextBlock>
                     </DataTemplate>
                 </dataVisualization:RadRadialGauge.LabelTemplate>
                 <dataVisualization:SegmentedRadialGaugeIndicator  StartValue="0" Value="200">
-                    <dataVisualization:BarIndicatorSegment Thickness="2" Stroke="Brown" Length="100"/>
-                    <dataVisualization:BarIndicatorSegment Thickness="2" Stroke="Red" Length="10" />
+                    <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="Brown" Length="100"/>
+                    <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="Red" Length="10" />
                 </dataVisualization:SegmentedRadialGaugeIndicator>
                 <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeSpeed" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
                 <dataVisualization:MarkerGaugeIndicator Name="MarkerGaugeSpeed" Value="0" Content="*" FontFamily="Segoe UI" FontSize="17" Foreground="Red" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
             </dataVisualization:RadRadialGauge>
-            <TextBlock Grid.Column="0" Name="TxtSpeed" Text="0 Km/h" FontSize="15" Margin="60,100,254.2,281" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="69" FontFamily="DS-Digital" FontWeight="Bold"/>
+            <TextBlock Grid.Column="0" Name="TxtSpeed" Text="0 Km/h" FontSize="17" Margin="60,100,254.2,281" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="69" FontFamily="DS-Digital" FontWeight="Bold"/>
 
             <dataVisualization:RadRadialGauge Name="GaugeRpm" MinValue="0" MaxValue="8" LabelStep="1" Margin="176,42,323,0" TickStep="1" MinAngle="-30" MaxAngle="210" VerticalAlignment="Top" LabelRadiusScale="1.15" Height="136" Grid.ColumnSpan="2"
                                               Grid.Column="0">
                 <dataVisualization:RadRadialGauge.LabelTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding}" Margin="-1 0 0 0" FontSize="15" Foreground="#595959"></TextBlock>
+                        <TextBlock Text="{Binding}" Margin="-1 0 0 0" FontSize="15" Foreground="AliceBlue"></TextBlock>
                     </DataTemplate>
                 </dataVisualization:RadRadialGauge.LabelTemplate>
                 <dataVisualization:SegmentedRadialGaugeIndicator  StartValue="0" Value="8">
-                    <dataVisualization:BarIndicatorSegment Thickness="2" Stroke="DarkSlateGray" Length="100"/>
-                    <dataVisualization:BarIndicatorSegment Thickness="2" Stroke="Red" Length="10" />
+                    <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="DarkSlateGray" Length="100"/>
+                    <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="Red" Length="10" />
                 </dataVisualization:SegmentedRadialGaugeIndicator>
                 <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeRpm" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
                 <dataVisualization:MarkerGaugeIndicator Name="MarkerGaugeRpm" Value="0" Content="*" FontFamily="Segoe UI" FontSize="17" Foreground="Red" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
             </dataVisualization:RadRadialGauge>
-            <TextBlock Grid.Column="0" Name="TxtRpm" Text="0 x 1000 rpm" FontSize="15" Margin="258,98,29.2,285" VerticalAlignment="Center" HorizontalAlignment="Center" Height="29" Width="96" FontFamily="DS-Digital" FontWeight="Bold"/>
+            <TextBlock Grid.Column="0" Name="TxtRpm" Text="0 x 1000 rpm" FontSize="17" Margin="258,98,29.2,285" VerticalAlignment="Center" HorizontalAlignment="Center" Height="29" Width="96" FontFamily="DS-Digital" FontWeight="Bold"/>
 
-            <TextBlock Grid.Column="0" Name="TxtHour" HorizontalAlignment="Left" Margin="132,9,0,0" TextWrapping="Wrap" Text="09/27/2017 21:28:56" VerticalAlignment="Top" Width="142" Height="26" FontFamily="DS-Digital" FontWeight="Bold" FontSize="16" Foreground="Black"/>
+            <TextBlock Grid.Column="0" Name="TxtHour" HorizontalAlignment="Left" Margin="130,6,0,0" TextWrapping="Wrap" Text="09/27/2017 21:28:56" VerticalAlignment="Top" Width="142" Height="26" FontFamily="DS-Digital" FontWeight="Bold" FontSize="16"/>
+            <TextBlock Grid.Column="0" x:Name="TxtTempIntake"  TextWrapping="Wrap" Text="0 °C" Margin="186,43,158.2,352" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
+
+            <dataVisualization:RadLinearGauge Grid.Column="0" MinValue="0" MaxValue="100" LabelOffset="10" TickStep="10" LabelStep="20" Height="40" Margin="150,-10,150,0">
+                <dataVisualization:LinearBarGaugeIndicator Value="100" Brush="#333333" Thickness="4" dataVisualization:RadLinearGauge.IndicatorOffset="-6"/>
+                <dataVisualization:LinearBarGaugeIndicator Name="BarFuelLevel" Value="50" IsAnimated="True" Brush="Cornsilk"  Thickness="4" dataVisualization:RadLinearGauge.IndicatorOffset="-6"/>
+                <dataVisualization:SegmentedLinearGaugeIndicator Value="100"  dataVisualization:RadLinearGauge.IndicatorOffset="-2">
+                    <dataVisualization:BarIndicatorSegment Length="100" Stroke="#999999" Thickness="1"/>
+                </dataVisualization:SegmentedLinearGaugeIndicator>
+            </dataVisualization:RadLinearGauge>
+            <Image Grid.Column="0" Source="Assets/fuel.png" Margin="184,170,181.2,223"></Image>
+            <Image Source="Assets/fuel_temp.jpg" Margin="253,169,110.2,223"></Image>
+            <TextBlock x:Name="TxtTempEngine"  TextWrapping="Wrap" Text="0 °C" Margin="278,169,66.2,216" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
+            <TextBlock x:Name="TxtFuelPressure"  TextWrapping="Wrap" Text="0 kPa" Margin="96,244,222.2,152" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
+            <TextBlock x:Name="TxtThrotlePosition"  TextWrapping="Wrap" Text="0 %" Margin="191,242,149.2,154" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
+            <!--<dataVisualization:RadLinearGauge MinValue="0" MaxValue="80" Grid.Row="1" LabelOffset="5" Height="120">
+                    <dataVisualization:RadLinearGauge.TickTemplate>
+                        <DataTemplate></DataTemplate>
+                    </dataVisualization:RadLinearGauge.TickTemplate>
+                    <dataVisualization:RadLinearGauge.LabelTemplate>
+                        <DataTemplate></DataTemplate>
+                    </dataVisualization:RadLinearGauge.LabelTemplate>
+                    <dataVisualization:LinearBarGaugeIndicator Value="80" Brush="#333333" Thickness="12" dataVisualization:RadLinearGauge.IndicatorOffset="-14"/>
+                    <dataVisualization:LinearBarGaugeIndicator Value="{Binding Expenses}" IsAnimated="True" Brush="Gray"  Thickness="12" dataVisualization:RadLinearGauge.IndicatorOffset="-14"/>
+                    <dataVisualization:SegmentedLinearGaugeIndicator Value="80" dataVisualization:RadLinearGauge.IndicatorOffset="-2">
+                        <dataVisualization:BarIndicatorSegment Stroke="Transparent" Length="60" Thickness="2"/>
+                        <dataVisualization:BarIndicatorSegment Stroke="#999999" Length="20" Thickness="2"/>
+                    </dataVisualization:SegmentedLinearGaugeIndicator>
+                    <dataVisualization:MarkerGaugeIndicator Value="0" Content="0"/>
+                    <dataVisualization:MarkerGaugeIndicator Value="60" dataVisualization:RadLinearGauge.IndicatorOffset="8">
+                        <dataVisualization:MarkerGaugeIndicator.Content>
+                            <StackPanel>
+                                <Ellipse Stroke="#999999" HorizontalAlignment="Center" StrokeThickness="2" Fill="#343434" Width="7" Height="7"/>
+                                <TextBlock Text="60" Margin="0 5 0 0" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </dataVisualization:MarkerGaugeIndicator.Content>
+                    </dataVisualization:MarkerGaugeIndicator>
+                    <dataVisualization:MarkerGaugeIndicator Value="80" dataVisualization:RadLinearGauge.IndicatorOffset="8">
+                        <dataVisualization:MarkerGaugeIndicator.Content>
+                            <StackPanel>
+                                <Ellipse Stroke="#999999" HorizontalAlignment="Center" StrokeThickness="2" Fill="#343434" Width="7" Height="7"/>
+                                <TextBlock Text="max" Margin="0 5 0 0" HorizontalAlignment="Center"></TextBlock>
+                            </StackPanel>
+                        </dataVisualization:MarkerGaugeIndicator.Content>
+                    </dataVisualization:MarkerGaugeIndicator>
+                </dataVisualization:RadLinearGauge>-->
+
         </Grid>
     </Grid>
 </Page>
