@@ -27,7 +27,7 @@ namespace Sim800Driver
 
                 if (serialDevice != null)
                 {
-                    serialDevice.WriteTimeout = TimeSpan.FromMilliseconds(1000);    //mS before a time-out occurs when a write operation does not finish (default=InfiniteTimeout).
+                    serialDevice.WriteTimeout = TimeSpan.FromMilliseconds(1000);
                     serialDevice.ReadTimeout = TimeSpan.FromMilliseconds(1000);
                     serialDevice.BaudRate = 9600;
                     serialDevice.StopBits = SerialStopBitCount.One;
@@ -73,7 +73,7 @@ namespace Sim800Driver
             return response.Contains("OK");
         }
         
-        public async Task<ShortMessageCollection> ReadSms()
+        public async Task<List<ShortMessage>> ReadSms()
         {
             var result = string.Empty;
 
@@ -95,9 +95,9 @@ namespace Sim800Driver
             return ParseMessages(result);
         }
 
-        public ShortMessageCollection ParseMessages(string input)
+        public List<ShortMessage> ParseMessages(string input)
         {
-            var messages = new ShortMessageCollection();
+            var messages = new List<ShortMessage>();
             try
             {
                 var r = new Regex(@"\+CMGL: (\d+),""(.+)"",""(.+)"",(.*),""(.+)""\r\n(.+)\r\n");
@@ -118,7 +118,6 @@ namespace Sim800Driver
 
                     m = m.NextMatch();
                 }
-
             }
             catch (Exception ex)
             {
@@ -140,10 +139,7 @@ namespace Sim800Driver
             {
                 result = _reader.ReadString(bytesRead);
             }
-
-            //var bytes = await _reader.LoadAsync(1024);
-            //var buf = _reader.ReadString(bytes);
-
+            
             return result;
         }
 
@@ -160,82 +156,8 @@ namespace Sim800Driver
             {
                 result = true;
             }
-
-            //try
-            //{
-            //    _reader.InputStreamOptions = InputStreamOptions.Partial;
-            //    var loadAsyncTask = _reader.LoadAsync(1024).AsTask();
-
-            //    var bytesRead = await loadAsyncTask;
-
-            //    if (bytesRead > 0)
-            //    {
-            //        var xxx = _reader.ReadString(bytesRead);
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    var agaaf = e;
-            //}
             
-
-            //var x =  _writer.WriteString(command);
-            //var xxx = await _writer.StoreAsync();
-
-
             return result;
         }
-
-    }
-
-    public class ShortMessage
-    {
-
-        #region Private Variables
-        private string index;
-        private string status;
-        private string sender;
-        private string alphabet;
-        private string sent;
-        private string message;
-        #endregion
-
-        #region Public Properties
-        public string Index
-        {
-            get { return index; }
-            set { index = value; }
-        }
-        public string Status
-        {
-            get { return status; }
-            set { status = value; }
-        }
-        public string Sender
-        {
-            get { return sender; }
-            set { sender = value; }
-        }
-        public string Alphabet
-        {
-            get { return alphabet; }
-            set { alphabet = value; }
-        }
-        public string Sent
-        {
-            get { return sent; }
-            set { sent = value; }
-        }
-        public string Message
-        {
-            get { return message; }
-            set { message = value; }
-        }
-        #endregion
-
-    }
-
-    public class ShortMessageCollection : List<ShortMessage>
-    {
     }
 }

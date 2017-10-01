@@ -2,7 +2,6 @@
 using System.Linq;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using TCC.ODBDriver;
 using ThingSpeakWinRT;
 using System.Globalization;
@@ -26,6 +25,8 @@ namespace TCC
         {
             IsClosed = true;
             InitializeComponent();
+
+            BtnClearSms.Visibility = Visibility.Collapsed;
 
             TxtSms.Text = DefaulSmsMessage;
         }
@@ -61,6 +62,7 @@ namespace TCC
                         {
                             TxtSms.Text = string.Empty;
                             TxtSms.Text = $" De: {sms.Sender}\n Mensagem: {sms.Message}";
+                            BtnClearSms.Visibility = Visibility.Visible;
                         });
                     }
                 }
@@ -71,7 +73,7 @@ namespace TCC
         {
             await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                TxtHour.Text = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+                TxtHour.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss", new CultureInfo("pt-BR"));
             });
 
             if (IsClosed)
@@ -94,13 +96,11 @@ namespace TCC
                     var fuelTankLevel = await _obdDriver.GetFuelTankLevelInput();
 
                     RadialBarGaugeSpeed.Value = speed;
-                    MarkerGaugeSpeed.Value = speed;
                     TxtSpeed.Text = speed + " km/h";
 
                     var normalizedRpm = Math.Round(rpm / 1000);
 
                     RadialBarGaugeRpm.Value = normalizedRpm;
-                    MarkerGaugeRpm.Value = normalizedRpm;
                     TxtRpm.Text = normalizedRpm + " x 1000 rpm";
 
                     TxtTempEngine.Text = engineTemp + " °C";
@@ -119,7 +119,8 @@ namespace TCC
                             Field3 = fuelPres.ToString(CultureInfo.InvariantCulture),
                             Field4 = engineTemp.ToString(CultureInfo.InvariantCulture),
                             Field5 = throtlePos.ToString(CultureInfo.InvariantCulture),
-                            Field6 = intakeTemp.ToString(CultureInfo.InvariantCulture)
+                            Field6 = intakeTemp.ToString(CultureInfo.InvariantCulture),
+                            Field7 = fuelTankLevel.ToString(CultureInfo.InvariantCulture),
                         };
                         await _thingSpeakClient.UpdateFeedAsync(ThingSpeakWriteApiKey, dataFeed);
                     }
@@ -135,82 +136,10 @@ namespace TCC
             }
         }
 
-        //private async void BtnStart_Click(object sender, RoutedEventArgs e)
-        //{
-            //try
-            //{
-            //    if (await _sim800Driver.InitializeConnection())
-            //    {
-            //        DispatcherTimerSetupSms();
-            //        //var messages = await _sim800Driver.ReadSms();
-            //        //var sms = messages.FirstOrDefault();
-            //        //if (sms != null)
-            //        //{
-            //        //    var isSmsRead = sms.Status.Contains("READ");
-            //        //    if (isSmsRead)
-            //        //    {
-            //        //        await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            //        //        {
-            //        //            TxtSms.Text = $"De: {sms.Sender}\nMensagem: {sms.Message}";
-            //        //        });
-            //        //    }
-            //        //}
-            //    }
-
-            //    //var x = await _sim800Driver.SendSms("Enviando novamente um SMS", "51989108383");
-
-            //}
-            //catch (Exception exception)
-            //{
-            //    var x = exception;
-
-            //}
-
-
-            //try
-            //{
-            //    if (await _obdDriver.InitializeConnection("danielvv"))
-            //    {
-            //        DispatcherTimerSetup();
-            //        IsClosed = false;
-            //    }
-            //}
-            //catch (Exception)
-            //{
-            //    // ignored
-            //}
-        //}
-
         ~MainPage()
         {
             _obdDriver.Close().Wait();
         }
-
-        //private static int value = 0;
-
-        //private void BtnClose_Click(object sender, RoutedEventArgs e)
-        //{
-        //    //await _obdDriver.Close();
-        //    //IsClosed = true;
-        //    //if (IsClosed)
-        //    //{
-        //    //    DispatcherTimerSetup();
-        //    //    IsClosed = false;
-        //    //}
-
-        //    RadialBarGaugeSpeed.Value = value;
-        //    MarkerGaugeSpeed.Value = value;
-        //    TxtSpeed.Text = value + " km/h";
-
-        //    TxtTempEngine.Text = value + " °C";
-        //    TxtTempIntake.Text = value + " °C";
-        //    //GaugeRpm.Value = value;
-        //    //GaugeSpeed.Value = value;
-        //    TxtFuelPressure.Text = value + " KpA";
-        //    TxtThrotlePosition.Text = value + " %";
-
-        //    value += 2;
-        //}
 
         private async void BtnClearSms_Click(object sender, RoutedEventArgs e)
         {
@@ -218,6 +147,7 @@ namespace TCC
             {
                 TxtSms.Text = string.Empty;
                 TxtSms.Text = DefaulSmsMessage;
+                BtnClearSms.Visibility = Visibility.Collapsed;
             });
         }
 
