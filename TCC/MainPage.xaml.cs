@@ -5,6 +5,10 @@ using Windows.UI.Xaml;
 using TCC.ODBDriver;
 using ThingSpeakWinRT;
 using System.Globalization;
+using Windows.UI.Xaml.Media.Imaging;
+using OpenWeatherMap;
+using WeatherAPI.OpenWeatherMap.org;
+using Weather = WeatherAPI.OpenWeatherMap.org.Models.Weather;
 
 namespace TCC
 {
@@ -170,6 +174,42 @@ namespace TCC
             {
                 // ignored
             }
+        }
+
+
+        private const string WeatherApi = "298782c5087abc5a14fe9d10d8fa46a4";
+        private readonly OpenWeatherMapClient _openWeatherMapClient = new OpenWeatherMapClient(WeatherApi);
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+
+                var currentWeather = await _openWeatherMapClient.CurrentWeather.GetByName("Porto Alegre");
+
+                var xxx = await _openWeatherMapClient.Forecast.GetByName("Porto Alegre");
+
+                var forecast = xxx.Forecast;
+
+                var amanha = DateTime.Now.Day + 1;
+                var amanha1 = DateTime.Now.Day + 2;
+                var amanha2 = DateTime.Now.Day + 3;
+
+                currentWeather.Temperature.Unit = "metric";
+
+                ImgTemp.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{currentWeather.Weather.Icon}.png", UriKind.Absolute));
+
+                TxtTemp.Text = currentWeather.Temperature.Value.ToString(CultureInfo.InvariantCulture) + " °C";
+
+                TxtTempDescription.Text = currentWeather.Weather.Value;
+
+                var x = 444;
+            }
+            catch (Exception exception)
+            {
+                var xx = exception;
+            }
+            
         }
     }
 }
