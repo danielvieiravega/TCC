@@ -30,7 +30,7 @@
                 </dataVisualization:SegmentedRadialGaugeIndicator>
                 <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeSpeed" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83" Width="208"/>
             </dataVisualization:RadRadialGauge>
-            <TextBlock Grid.Column="0" Name="TxtSpeed" Text="0 Km/h" FontSize="17" Margin="60,100,254.2,281" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="69" FontFamily="DS-Digital" FontWeight="Bold"/>
+            <TextBlock Grid.Column="0" Name="TxtSpeed" TextAlignment="Center" Text="0 Km/h" FontSize="20" Margin="82,124,242.2,257" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="69" FontFamily="digital display tfb" FontWeight="Bold"/>
 
             <dataVisualization:RadRadialGauge MinValue="0" MaxValue="8" LabelStep="1" Margin="236,59,269,0" TickStep="1" MinAngle="-30" MaxAngle="210" VerticalAlignment="Top" LabelRadiusScale="1.15" Height="180" Grid.ColumnSpan="2"
                                               Grid.Column="0" Width="240">
@@ -46,7 +46,7 @@
                 <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeRpm" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83" Height="193"/>
             </dataVisualization:RadRadialGauge>
 
-            <TextBlock Grid.Column="0" Name="TxtRpm" Text="0 x 1000 rpm" FontSize="17" Margin="312,120,340,263" VerticalAlignment="Center" HorizontalAlignment="Center" Height="29" Width="96" FontFamily="DS-Digital" FontWeight="Bold" Grid.ColumnSpan="2"/>
+            <TextBlock Grid.Column="0" Name="TxtRpm" TextAlignment="Center" Text="0 x 1000 rpm" FontSize="20" Margin="322,124,350,259" VerticalAlignment="Center" HorizontalAlignment="Center" Height="29" Width="96" FontFamily="digital display tfb" FontWeight="Bold" Grid.ColumnSpan="2"/>
             <TextBlock Grid.Column="0" x:Name="TxtTempIntake"  TextAlignment="Center" TextWrapping="Wrap" Text="0 °C" Margin="223,15,121.2,380" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
 
             <dataVisualization:RadLinearGauge Grid.Column="0" MinValue="0" MaxValue="100" LabelOffset="10" TickStep="10" LabelStep="20" Height="40" Margin="160,300,140,0">
@@ -61,7 +61,6 @@
             <TextBlock Grid.Column="0" x:Name="TxtTempEngine" TextAlignment="Center" TextWrapping="Wrap" Text="0 °C" Margin="306,329,38.2,56" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
             <TextBlock Grid.Column="0" x:Name="TxtFuelPressure" TextAlignment="Center" TextWrapping="Wrap" Text="0 kPa" Margin="44,388,274.2,8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
             <TextBlock Grid.Column="0" x:Name="TxtThrotlePosition"  TextAlignment="Center" TextWrapping="Wrap" Text="0 %" Margin="55,338,285.2,58" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
-            <Button Name="BtnTemp" Content="Button" Grid.Column="1" HorizontalAlignment="Left" Margin="281.8,165,0,0" VerticalAlignment="Top" Click="Button_Click"/>
             <Grid Name="GridTemp" Grid.Column="1" HorizontalAlignment="Left" Height="173" Margin="64.8,225,0,0" VerticalAlignment="Top" Width="304">
                 <Image Name="ImgTemp" HorizontalAlignment="Left" Height="70" Margin="13,24,0,0" VerticalAlignment="Top" Width="70" Source="Assets/GridPrevisaoTempo/default.png"/>
                 <TextBlock Name="TxtTemp" TextAlignment="Center" HorizontalAlignment="Left" Margin="14,126,0,0" TextWrapping="Wrap" Text="30 °C" VerticalAlignment="Top" Height="31" Width="70" FontSize="25"/>

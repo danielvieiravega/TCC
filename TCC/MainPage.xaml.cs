@@ -23,6 +23,10 @@ namespace TCC
 
         private readonly CoreDispatcher _dispatcher = Window.Current.Dispatcher;
         private DispatcherTimer _dispatcherTimer;
+        private DispatcherTimer _dispatcherTimerClock;
+        private DispatcherTimer _dispatcherTimerForecastWheather;
+        private DispatcherTimer _dispatcherTimerSms;
+
         private readonly ObdDriver _obdDriver = new ObdDriver();
         private readonly Sim800LDriver _sim800Driver = new Sim800LDriver(); 
         private readonly ThingSpeakClient _thingSpeakClient = new ThingSpeakClient(false);
@@ -35,9 +39,12 @@ namespace TCC
             InitializeComponent();
 
             BtnClearSms.Visibility = Visibility.Collapsed;
-
             TxtSms.Text = DefaulSmsMessage;
+            PopulateWheaterDictionary();
+        }
 
+        private void PopulateWheaterDictionary()
+        {
             _iconList.Add("clear sky", "Céu limpo");
             _iconList.Add("few clouds", "Poucas nuvens");
             _iconList.Add("scattered clouds", "Nuvens dispersas");
@@ -57,8 +64,6 @@ namespace TCC
             _iconList.Add("heavy intensity shower rain", "chuva intensa");
             _iconList.Add("ragged shower rain", "chuva esfarrapada");
             _iconList.Add("overcast clouds", "Nublado");
-
-            
         }
 
         public void DispatcherTimerSetup()
@@ -69,12 +74,79 @@ namespace TCC
             _dispatcherTimer.Start();
         }
 
+        public void DispatcherTimerClock()
+        {
+            _dispatcherTimerClock = new DispatcherTimer();
+            _dispatcherTimerClock.Tick += DispatcherTimer_Tick_Clock;
+            _dispatcherTimerClock.Interval = new TimeSpan(0, 0, 1);
+            _dispatcherTimerClock.Start();
+        }
         public void DispatcherTimerSetupSms()
         {
-            _dispatcherTimer = new DispatcherTimer();
-            _dispatcherTimer.Tick += DispatcherTimer_Tick_Sms;
-            _dispatcherTimer.Interval = new TimeSpan(0, 0, 10);
-            _dispatcherTimer.Start();
+            _dispatcherTimerSms = new DispatcherTimer();
+            _dispatcherTimerSms.Tick += DispatcherTimer_Tick_Sms;
+            _dispatcherTimerSms.Interval = new TimeSpan(0, 0, 10);
+            _dispatcherTimerSms.Start();
+        }
+
+        public void DispatcherTimerSetupForecastWheather()
+        {
+            _dispatcherTimerForecastWheather = new DispatcherTimer();
+            _dispatcherTimerForecastWheather.Tick += DispatcherTimer_Tick_Forecast;
+            _dispatcherTimerForecastWheather.Interval = new TimeSpan(0, 1, 0);
+            _dispatcherTimerForecastWheather.Start();
+        }
+
+        private async void DispatcherTimer_Tick_Clock(object sender, object e)
+        {
+            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                TxtHour.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss", new CultureInfo("pt-BR"));
+            });
+        }
+
+        private async void DispatcherTimer_Tick_Forecast(object sender, object e)
+        {
+            try
+            {
+                await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    var currentWeather = await _openWeatherMapClient.CurrentWeather.GetByName("Porto Alegre");
+                    ImgTemp.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{currentWeather.Weather.Icon}.png", UriKind.Absolute));
+                    TxtTemp.Text = ((int)(currentWeather.Temperature.Value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
+                    TxtTempDescription.Text = _iconList[currentWeather.Weather.Value];
+                    TxtHoje.Text = PegaHoraBrasilia().ToString("dddd", new CultureInfo("pt-BR"));
+
+                    var forecast = (await _openWeatherMapClient.Forecast.GetByName("Porto Alegre")).Forecast;
+
+                    var amanha0 = PegaHoraBrasilia().Day + 1;
+                    var amanha1 = PegaHoraBrasilia().Day + 2;
+                    var amanha2 = PegaHoraBrasilia().Day + 3;
+
+                    var amanha0Temp = forecast.First(d => d.From.Day == amanha0 && d.From.Hour >= 9);
+                    ImgTemp0.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha0Temp.Symbol.Var}.png", UriKind.Absolute));
+                    TxtAmanha0Temp.Text = ((int)(amanha0Temp.Temperature.Value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
+                    TxtAmanha0Desc.Text = _iconList[amanha0Temp.Symbol.Name];
+                    TxtAmanha0.Text = amanha0Temp.From.ToString("dddd", new CultureInfo("pt-BR"));
+
+                    var amanha1Temp = forecast.First(d => d.From.Day == amanha1 && d.From.Hour >= 9);
+                    ImgTemp1.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha1Temp.Symbol.Var}.png", UriKind.Absolute));
+                    TxtAmanha1Temp.Text = ((int)(amanha1Temp.Temperature.Value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
+                    TxtAmanha1Desc.Text = _iconList[amanha1Temp.Symbol.Name];
+                    TxtAmanha1.Text = amanha1Temp.From.ToString("dddd", new CultureInfo("pt-BR"));
+
+                    var amanha2Temp = forecast.First(d => d.From.Day == amanha2 && d.From.Hour >= 9);
+                    ImgTemp2.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha2Temp.Symbol.Var}.png", UriKind.Absolute));
+                    TxtAmanha2Temp.Text = ((int)(amanha2Temp.Temperature.Value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
+                    TxtAmanha2Desc.Text = _iconList[amanha2Temp.Symbol.Name];
+                    TxtAmanha2.Text = amanha2Temp.From.ToString("dddd", new CultureInfo("pt-BR"));
+
+                });
+            }
+            catch (Exception exception)
+            {
+                var xx = exception;
+            }
         }
 
         private async void DispatcherTimer_Tick_Sms(object sender, object e)
@@ -101,11 +173,6 @@ namespace TCC
 
         private async void DispatcherTimer_Tick(object sender, object e)
         {
-            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                TxtHour.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss", new CultureInfo("pt-BR"));
-            });
-
             if (IsClosed)
             {
                 _dispatcherTimer.Stop();
@@ -185,6 +252,8 @@ namespace TCC
         {
             try
             {
+                DispatcherTimerClock();
+
                 if (await _obdDriver.InitializeConnection("danielvv"))
                 {
                     DispatcherTimerSetup();
@@ -195,6 +264,8 @@ namespace TCC
                 {
                     DispatcherTimerSetupSms();
                 }
+
+                DispatcherTimerSetupForecastWheather();
             }
             catch (Exception)
             {
@@ -208,50 +279,6 @@ namespace TCC
             return TimeZoneInfo.ConvertTime(DateTime.Now,
                 TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
         }
-
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-                    {
-                        var currentWeather = await _openWeatherMapClient.CurrentWeather.GetByName("Porto Alegre");
-                        ImgTemp.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{currentWeather.Weather.Icon}.png", UriKind.Absolute));
-                        TxtTemp.Text = ((int)(currentWeather.Temperature.Value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
-                        TxtTempDescription.Text = _iconList[currentWeather.Weather.Value];
-                        TxtHoje.Text = PegaHoraBrasilia().ToString("dddd", new CultureInfo("pt-BR"));
-
-                        var forecast = (await _openWeatherMapClient.Forecast.GetByName("Porto Alegre")).Forecast;
-                        
-                        var amanha0 = PegaHoraBrasilia().Day + 1;
-                        var amanha1 = PegaHoraBrasilia().Day + 2;
-                        var amanha2 = PegaHoraBrasilia().Day + 3;
-
-                        var amanha0Temp = forecast.First(d => d.From.Day == amanha0 && d.From.Hour >= 9);
-                        ImgTemp0.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha0Temp.Symbol.Var}.png", UriKind.Absolute));
-                        TxtAmanha0Temp.Text = ((int)(amanha0Temp.Temperature.Value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
-                        TxtAmanha0Desc.Text = _iconList[amanha0Temp.Symbol.Name];
-                        TxtAmanha0.Text = amanha0Temp.From.ToString("dddd", new CultureInfo("pt-BR"));
-
-                        var amanha1Temp = forecast.First(d => d.From.Day == amanha1 && d.From.Hour >= 9);
-                        ImgTemp1.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha1Temp.Symbol.Var}.png", UriKind.Absolute));
-                        TxtAmanha1Temp.Text = ((int)(amanha1Temp.Temperature.Value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
-                        TxtAmanha1Desc.Text = _iconList[amanha1Temp.Symbol.Name];
-                        TxtAmanha1.Text = amanha1Temp.From.ToString("dddd", new CultureInfo("pt-BR"));
-
-                        var amanha2Temp = forecast.First(d => d.From.Day == amanha2 && d.From.Hour >= 9);
-                        ImgTemp2.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha2Temp.Symbol.Var}.png", UriKind.Absolute));
-                        TxtAmanha2Temp.Text = ((int)(amanha2Temp.Temperature.Value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
-                        TxtAmanha2Desc.Text = _iconList[amanha2Temp.Symbol.Name];
-                        TxtAmanha2.Text = amanha2Temp.From.ToString("dddd", new CultureInfo("pt-BR"));
-
-                    });
-            }
-            catch (Exception exception)
-            {
-                var xx = exception;
-            }
-
-        }
+       
     }
 }

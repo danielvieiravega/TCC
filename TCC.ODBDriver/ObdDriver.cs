@@ -35,23 +35,24 @@ namespace TCC.ODBDriver
 
                 if (_deviceService != null)
                 {
-                    _streamSocket = new StreamSocket();
-
-                    await _streamSocket.ConnectAsync(_deviceService.ConnectionHostName,
-                        _deviceService.ConnectionServiceName);
-
-                    SetupStreams();
-
                     try
                     {
+                        _streamSocket = new StreamSocket();
+
+                        await _streamSocket.ConnectAsync(_deviceService.ConnectionHostName,
+                            _deviceService.ConnectionServiceName);
+
+                        SetupStreams();
+
                         await SendInitializationCommands();
+
+                        result = true;
                     }
                     catch (Exception e)
                     {
                         LoggingServices.Instance.WriteLine<ObdDriver>($"Failure sending initialization commands: {e.Message}", LogLevel.Fatal);
                     }
-
-                    result = true;
+                    
                 }
             }
 
