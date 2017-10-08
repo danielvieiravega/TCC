@@ -1,4 +1,4 @@
-﻿namespace Sim800Driver
+﻿namespace TCC.Sim800Driver
 {
     public class ShortMessage
     {

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.SerialCommunication;
 using Windows.Storage.Streams;
 
-namespace Sim800Driver
+
+namespace TCC.Sim800Driver
 {
-    public class Sim800Driver
+    public class Sim800LDriver
     {
         private DataReader _reader;
         private DataWriter _writer;

@@ -248,6 +248,22 @@ namespace TCC.ODBDriver
             return result;
         }
 
+        public interface IParseData
+        {
+            double Parse(string response);
+        }
+
+        public class ParseSpeed : IParseData
+        {
+            public double Parse(string response)
+            {
+                var speedHexString = response.Substring(4);
+                var speed = Convert.ToInt32(speedHexString, 16);
+
+                return Convert.ToDouble(speed);
+            }
+        }
+        
         private static double ParseData(string response, PID pid)
         {
             var result = 0.0;

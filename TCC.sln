@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCC", "TCC\TCC.csproj", "{2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODBDriver", "TCC.ODBDriver\ODBDriver.csproj", "{C0D18F05-D1C9-463A-90BB-4955B8C00055}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sim800Driver", "Sim800Driver\Sim800Driver.csproj", "{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sim800Driver", "TCC.Sim800Driver\Sim800Driver.csproj", "{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -7,8 +7,8 @@
     <ProjectGuid>{C9909041-1A97-4AAA-9CB7-52B7DE8EAFD1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sim800Driver</RootNamespace>
-    <AssemblyName>Sim800Driver</AssemblyName>
+    <RootNamespace>TCC.Sim800Driver</RootNamespace>
+    <AssemblyName>TCC.Sim800Driver</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.15063.0</TargetPlatformVersion>
@@ -109,7 +109,7 @@
     <Compile Include="ShortMessage.cs" />
     <Compile Include="Sim800Driver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Properties\Sim800Driver.rd.xml" />
+    <EmbeddedResource Include="Properties\TCC.Sim800Driver.rd.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">

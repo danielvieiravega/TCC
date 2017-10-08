@@ -5,21 +5,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dataVisualization="using:Telerik.UI.Xaml.Controls.DataVisualization"
     x:Class="TCC.MainPage"
-    mc:Ignorable="d" Loaded="Page_Loaded" RequestedTheme="Dark">
+    mc:Ignorable="d" Loaded="Page_Loaded" RequestedTheme="Dark" Margin="0,-6,0,6">
 
     <Grid Background="{ThemeResource AppBarToggleButtonCheckedDisabledForegroundThemeBrush}">
-        <Grid HorizontalAlignment="Left" Height="412" Margin="10,10,0,0" VerticalAlignment="Top" Width="748">
+        <Grid HorizontalAlignment="Left" Height="412" Margin="0,0,0,0" VerticalAlignment="Top" Width="768">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="383*"/>
                 <ColumnDefinition Width="365*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" x:Name="LblPressure" HorizontalAlignment="Left" Margin="76,229,0,0" TextWrapping="Wrap" Text="Pressão Combustível" VerticalAlignment="Top" FontSize="9"/>
-            <TextBlock Grid.Column="0" x:Name="LblThrotlePosition" HorizontalAlignment="Left" Margin="173,229,0,0" TextWrapping="Wrap" Text="Posição acelerador" VerticalAlignment="Top" FontSize="9"/>
-            <TextBlock x:Name="TxtSms" HorizontalAlignment="Left" Margin="28.8,33,0,0" TextWrapping="Wrap" Text="  Nenhum SMS a exibir no momento!" VerticalAlignment="Top" Height="115" Width="298" Grid.Column="1"/>
-            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="115" Margin="28.8,33,0,0" VerticalAlignment="Top" Width="298" Grid.Column="1"/>
-            <Button x:Name="BtnClearSms" Content="Limpar" HorizontalAlignment="Left" Margin="130.8,161,0,0" VerticalAlignment="Top" Click="BtnClearSms_Click" Grid.Column="1" RenderTransformOrigin="1.164,0.475" FontWeight="Bold"/>
+            <TextBlock Grid.Column="0" x:Name="LblPressure" HorizontalAlignment="Left" Margin="40,373,0,0" TextWrapping="Wrap" Text="Pressão Combustível" VerticalAlignment="Top" FontSize="9"/>
+            <TextBlock Grid.Column="0" x:Name="LblThrotlePosition" HorizontalAlignment="Left" Margin="45,325,0,0" TextWrapping="Wrap" Text="Posição acelerador" VerticalAlignment="Top" FontSize="9"/>
+            <TextBlock x:Name="TxtSms" HorizontalAlignment="Left" Margin="110.8,11,0,0" TextWrapping="Wrap" Text="  Nenhum SMS a exibir no momento!" VerticalAlignment="Top" Height="115" Width="256" Grid.Column="1"/>
+            <Button x:Name="BtnClearSms" Content="Limpar" HorizontalAlignment="Left" Margin="200.8,137,0,0" VerticalAlignment="Top" Click="BtnClearSms_Click" Grid.Column="1" RenderTransformOrigin="1.164,0.475" FontWeight="Bold"/>
 
-            <dataVisualization:RadRadialGauge Grid.Column="0" Name="GaugeSpeed" MinValue="0" MaxValue="200" LabelStep="20" Margin="-47,42,152.2,0" TickStep="10" MinAngle="-50" MaxAngle="250" VerticalAlignment="Top" LabelRadiusScale="1.15" Height="141">
+            <dataVisualization:RadRadialGauge Grid.Column="0" Name="GaugeSpeed" MinValue="0" MaxValue="200" LabelStep="20" Margin="-10,59,152.2,0" TickStep="10" MinAngle="-50" MaxAngle="250" VerticalAlignment="Top" LabelRadiusScale="1.15" Height="180" Width="240">
                 <dataVisualization:RadRadialGauge.LabelTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding}" Margin="0 0 0 0" FontSize="15" Foreground="AliceBlue"></TextBlock>
@@ -29,12 +28,12 @@
                     <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="Brown" Length="100"/>
                     <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="Red" Length="10" />
                 </dataVisualization:SegmentedRadialGaugeIndicator>
-                <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeSpeed" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
+                <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeSpeed" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83" Width="208"/>
             </dataVisualization:RadRadialGauge>
             <TextBlock Grid.Column="0" Name="TxtSpeed" Text="0 Km/h" FontSize="17" Margin="60,100,254.2,281" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="69" FontFamily="DS-Digital" FontWeight="Bold"/>
 
-            <dataVisualization:RadRadialGauge Name="GaugeRpm" MinValue="0" MaxValue="8" LabelStep="1" Margin="176,42,323,0" TickStep="1" MinAngle="-30" MaxAngle="210" VerticalAlignment="Top" LabelRadiusScale="1.15" Height="136" Grid.ColumnSpan="2"
-                                              Grid.Column="0">
+            <dataVisualization:RadRadialGauge MinValue="0" MaxValue="8" LabelStep="1" Margin="236,59,269,0" TickStep="1" MinAngle="-30" MaxAngle="210" VerticalAlignment="Top" LabelRadiusScale="1.15" Height="180" Grid.ColumnSpan="2"
+                                              Grid.Column="0" Width="240">
                 <dataVisualization:RadRadialGauge.LabelTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding}" Margin="-1 0 0 0" FontSize="15" Foreground="AliceBlue"></TextBlock>
@@ -44,34 +43,46 @@
                     <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="DarkSlateGray" Length="100"/>
                     <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="Red" Length="10" />
                 </dataVisualization:SegmentedRadialGaugeIndicator>
-                <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeRpm" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83"/>
+                <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeRpm" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83" Height="193"/>
             </dataVisualization:RadRadialGauge>
 
-            <TextBlock Grid.Column="0" Name="TxtRpm" Text="0 x 1000 rpm" FontSize="17" Margin="258,98,29.2,285" VerticalAlignment="Center" HorizontalAlignment="Center" Height="29" Width="96" FontFamily="DS-Digital" FontWeight="Bold"/>
-            <TextBlock Grid.Column="0" Name="TxtHour" HorizontalAlignment="Left" Margin="130,6,0,0" TextWrapping="Wrap" Text="09/27/2017 21:28:56" VerticalAlignment="Top" Width="142" Height="26" FontFamily="DS-Digital" FontWeight="Bold" FontSize="16"/>
-            <TextBlock Grid.Column="0" x:Name="TxtTempIntake"  TextWrapping="Wrap" Text="0 °C" Margin="188,27,156.2,368" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
+            <TextBlock Grid.Column="0" Name="TxtRpm" Text="0 x 1000 rpm" FontSize="17" Margin="312,120,340,263" VerticalAlignment="Center" HorizontalAlignment="Center" Height="29" Width="96" FontFamily="DS-Digital" FontWeight="Bold" Grid.ColumnSpan="2"/>
+            <TextBlock Grid.Column="0" x:Name="TxtTempIntake"  TextAlignment="Center" TextWrapping="Wrap" Text="0 °C" Margin="223,15,121.2,380" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
 
-            <dataVisualization:RadLinearGauge Grid.Column="0" MinValue="0" MaxValue="100" LabelOffset="10" TickStep="10" LabelStep="20" Height="40" Margin="160,195,140.2,177">
+            <dataVisualization:RadLinearGauge Grid.Column="0" MinValue="0" MaxValue="100" LabelOffset="10" TickStep="10" LabelStep="20" Height="40" Margin="160,300,140,0">
                 <dataVisualization:LinearBarGaugeIndicator Value="100" Brush="#333333" Thickness="4" dataVisualization:RadLinearGauge.IndicatorOffset="-6"/>
                 <dataVisualization:LinearBarGaugeIndicator Name="BarFuelLevel" Value="50" IsAnimated="True" Brush="Cornsilk"  Thickness="4" dataVisualization:RadLinearGauge.IndicatorOffset="-6"/>
                 <dataVisualization:SegmentedLinearGaugeIndicator Value="100"  dataVisualization:RadLinearGauge.IndicatorOffset="-2">
-                    <dataVisualization:BarIndicatorSegment Length="100" Stroke="#999999" Thickness="1"/>
+                    <dataVisualization:BarIndicatorSegment Length="100" Stroke="#999999" Thickness="1" HorizontalAlignment="Right" Width="83"/>
                 </dataVisualization:SegmentedLinearGaugeIndicator>
             </dataVisualization:RadLinearGauge>
-            <Image Grid.Column="0" Source="Assets/fuel.png" Margin="192,182,173.2,211"></Image>
-            <Image Grid.Column="0" Source="Assets/fuel_temp.jpg" Margin="253,169,110.2,223"></Image>
-            <TextBlock Grid.Column="0" x:Name="TxtTempEngine"  TextWrapping="Wrap" Text="0 °C" Margin="278,169,66.2,216" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
-            <TextBlock Grid.Column="0" x:Name="TxtFuelPressure"  TextWrapping="Wrap" Text="0 kPa" Margin="96,244,222.2,152" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
-            <TextBlock Grid.Column="0" x:Name="TxtThrotlePosition"  TextWrapping="Wrap" Text="0 %" Margin="191,242,149.2,154" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
-            <Button Name="BtnTemp" Content="Button" Grid.Column="1" HorizontalAlignment="Left" Margin="261.8,167,0,0" VerticalAlignment="Top" Click="Button_Click"/>
-            <Grid Name="GridTemp" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="173" Margin="278,229,0,0" VerticalAlignment="Top" Width="460">
-                <Image Name="ImgTemp" HorizontalAlignment="Left" Height="78" Margin="10,38,0,0" VerticalAlignment="Top" Width="79"/>
-                <TextBlock Name="TxtTemp" HorizontalAlignment="Left" Margin="96,50,0,0" TextWrapping="Wrap" Text="23 °C" VerticalAlignment="Top" Height="56" Width="109" FontSize="36"/>
-                <Image Name="ImgTemp1" HorizontalAlignment="Left" Height="56" Margin="224,50,0,0" VerticalAlignment="Top" Width="62"/>
-                <Image Name="ImgTemp2" HorizontalAlignment="Left" Height="56" Margin="306,50,0,0" VerticalAlignment="Top" Width="62"/>
-                <Image Name="ImgTemp3" HorizontalAlignment="Left" Height="56" Margin="386,50,0,0" VerticalAlignment="Top" Width="62"/>
-                <TextBox Name="TxtHumidade" HorizontalAlignment="Left" Margin="13,125,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top"/>
-                <TextBlock Name="TxtTempDescription" HorizontalAlignment="Left" Margin="13,10,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Width="76"/>
+            <Image Grid.Column="0" Source="Assets/fuel.png" Margin="193,322,172.2,71"></Image>
+            <Image Grid.Column="0" Source="Assets/fuel_temp.jpg" Margin="281,329,82.2,63"></Image>
+            <TextBlock Grid.Column="0" x:Name="TxtTempEngine" TextAlignment="Center" TextWrapping="Wrap" Text="0 °C" Margin="306,329,38.2,56" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
+            <TextBlock Grid.Column="0" x:Name="TxtFuelPressure" TextAlignment="Center" TextWrapping="Wrap" Text="0 kPa" Margin="44,388,274.2,8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
+            <TextBlock Grid.Column="0" x:Name="TxtThrotlePosition"  TextAlignment="Center" TextWrapping="Wrap" Text="0 %" Margin="55,338,285.2,58" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
+            <Button Name="BtnTemp" Content="Button" Grid.Column="1" HorizontalAlignment="Left" Margin="281.8,165,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+            <Grid Name="GridTemp" Grid.Column="1" HorizontalAlignment="Left" Height="173" Margin="64.8,225,0,0" VerticalAlignment="Top" Width="304">
+                <Image Name="ImgTemp" HorizontalAlignment="Left" Height="70" Margin="13,24,0,0" VerticalAlignment="Top" Width="70" Source="Assets/GridPrevisaoTempo/default.png"/>
+                <TextBlock Name="TxtTemp" TextAlignment="Center" HorizontalAlignment="Left" Margin="14,126,0,0" TextWrapping="Wrap" Text="30 °C" VerticalAlignment="Top" Height="31" Width="70" FontSize="25"/>
+                <Image Name="ImgTemp0" HorizontalAlignment="Left" Height="40" Margin="120,18,0,0" VerticalAlignment="Top" Width="40" Source="Assets/GridPrevisaoTempo/default.png"/>
+                <Image Name="ImgTemp1" HorizontalAlignment="Left" Height="40" Margin="189,18,0,0" VerticalAlignment="Top" Width="40" Source="Assets/GridPrevisaoTempo/default.png"/>
+                <Image Name="ImgTemp2" HorizontalAlignment="Left" Height="40" Margin="255,18,0,0" VerticalAlignment="Top" Width="40" Source="Assets/GridPrevisaoTempo/default.png"/>
+                <TextBlock Name="TxtTempDescription" TextAlignment="Center" HorizontalAlignment="Left" Margin="10,2,0,0" TextWrapping="Wrap" Text="Céu limpo" VerticalAlignment="Top" Width="76" Height="20"/>
+                <TextBlock x:Name="TxtAmanha0Temp" HorizontalAlignment="Left" Margin="120,76,0,77" TextWrapping="Wrap" Text="20 °C" Width="40" Height="20"/>
+                <TextBlock x:Name="TxtAmanha0Desc" TextAlignment="Center" HorizontalAlignment="Left" Margin="110,3,0,160" TextWrapping="Wrap" Text="Céu limpo" Width="60" FontSize="8" Height="10"/>
+                <TextBlock x:Name="TxtAmanha1Temp" TextAlignment="Center" HorizontalAlignment="Left" Margin="189,77,0,76" TextWrapping="Wrap" Text="21 °C" Width="40" Height="20"/>
+                <TextBlock x:Name="TxtAmanha1Desc" TextAlignment="Center" HorizontalAlignment="Left" Margin="175,3,0,160" TextWrapping="Wrap" Text="Céu limpo" Width="60" FontSize="8" Height="10"/>
+                <TextBlock x:Name="TxtAmanha2Temp" TextAlignment="Center" HorizontalAlignment="Left" Margin="255,76,0,77" TextWrapping="Wrap" Text="22 °C" Width="40" Height="20"/>
+                <TextBlock x:Name="TxtHoje" TextAlignment="Center" HorizontalAlignment="Left" Margin="0,98,0,0" TextWrapping="Wrap" Text="Domingo" VerticalAlignment="Top" Width="100" Height="20"/>
+                <TextBlock x:Name="TxtAmanha0" TextAlignment="Center" HorizontalAlignment="Left" Margin="114,65,0,98" TextWrapping="Wrap" Text="Segunda-Feira" Width="52" FontSize="8" Height="10"/>
+                <TextBlock x:Name="TxtAmanha1" TextAlignment="Center" HorizontalAlignment="Left" Margin="183,64,0,99" TextWrapping="Wrap" Text="Terca-Feira" Width="52" FontSize="8" Height="10"/>
+                <TextBlock x:Name="TxtAmanha2" TextAlignment="Center" HorizontalAlignment="Left" Margin="250,63,0,100" TextWrapping="Wrap" Text="Quarta-Feira" Width="52" FontSize="8" Height="10"/>
+                <TextBlock x:Name="TxtAmanha2Desc" Margin="248,3,-4,160" TextAlignment="Center" TextWrapping="Wrap" Text="Céu limpo" Width="60" FontSize="8" Height="10" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="0" x:Name="TxtHour" HorizontalAlignment="Left" Margin="114,128,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" Height="20" FontWeight="Bold" FontSize="16">
+                    <Run Text="27/"/>
+                    <Run Text="09/2017 21:28:56"/>
+                </TextBlock>
             </Grid>
         </Grid>
     </Grid>
