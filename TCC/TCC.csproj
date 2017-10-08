@@ -95,10 +95,15 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dispatchers\DispactcherTimeObd.cs" />
+    <Compile Include="Dispatchers\DispatcherTimeForecastWheather.cs" />
+    <Compile Include="Dispatchers\DispatcherTimeSim800.cs" />
+    <Compile Include="Dispatchers\DispatcherTimeClock.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WheatherDescription.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

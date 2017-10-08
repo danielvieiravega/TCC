@@ -26,9 +26,9 @@
                 </dataVisualization:RadRadialGauge.LabelTemplate>
                 <dataVisualization:SegmentedRadialGaugeIndicator  StartValue="0" Value="200">
                     <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="Brown" Length="100"/>
-                    <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="Red" Length="10" />
+                    <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="Red" Length="83" />
                 </dataVisualization:SegmentedRadialGaugeIndicator>
-                <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeSpeed" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83" Width="208"/>
+                <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeSpeed" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83" Width="209" Height="185" Margin="15,-4,0,0"/>
             </dataVisualization:RadRadialGauge>
             <TextBlock Grid.Column="0" Name="TxtSpeed" TextAlignment="Center" Text="0 Km/h" FontSize="20" Margin="82,124,242.2,257" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="69" FontFamily="digital display tfb" FontWeight="Bold"/>
 
@@ -41,9 +41,9 @@
                 </dataVisualization:RadRadialGauge.LabelTemplate>
                 <dataVisualization:SegmentedRadialGaugeIndicator  StartValue="0" Value="8">
                     <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="DarkSlateGray" Length="100"/>
-                    <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="Red" Length="10" />
+                    <dataVisualization:BarIndicatorSegment Thickness="4" Stroke="Red" Length="15" />
                 </dataVisualization:SegmentedRadialGaugeIndicator>
-                <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeRpm" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83" Height="193"/>
+                <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeRpm" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83" Height="193" Margin="0,-6,0,0"/>
             </dataVisualization:RadRadialGauge>
 
             <TextBlock Grid.Column="0" Name="TxtRpm" TextAlignment="Center" Text="0 x 1000 rpm" FontSize="20" Margin="322,124,350,259" VerticalAlignment="Center" HorizontalAlignment="Center" Height="29" Width="96" FontFamily="digital display tfb" FontWeight="Bold" Grid.ColumnSpan="2"/>
@@ -78,10 +78,7 @@
                 <TextBlock x:Name="TxtAmanha1" TextAlignment="Center" HorizontalAlignment="Left" Margin="183,64,0,99" TextWrapping="Wrap" Text="Terca-Feira" Width="52" FontSize="8" Height="10"/>
                 <TextBlock x:Name="TxtAmanha2" TextAlignment="Center" HorizontalAlignment="Left" Margin="250,63,0,100" TextWrapping="Wrap" Text="Quarta-Feira" Width="52" FontSize="8" Height="10"/>
                 <TextBlock x:Name="TxtAmanha2Desc" Margin="248,3,-4,160" TextAlignment="Center" TextWrapping="Wrap" Text="Céu limpo" Width="60" FontSize="8" Height="10" HorizontalAlignment="Left"/>
-                <TextBlock Grid.Column="0" x:Name="TxtHour" HorizontalAlignment="Left" Margin="114,128,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" Height="20" FontWeight="Bold" FontSize="16">
-                    <Run Text="27/"/>
-                    <Run Text="09/2017 21:28:56"/>
-                </TextBlock>
+                <TextBlock TextAlignment="Center" Text="09/2017 21:28:56" Grid.Column="0" x:Name="TxtHour" HorizontalAlignment="Left" Margin="114,128,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" Height="20" FontWeight="Bold" FontSize="16" />
             </Grid>
         </Grid>
     </Grid>
