@@ -72,6 +72,120 @@ namespace TCC.Sim800Driver
 
             return response.Contains("OK");
         }
+
+        public async Task<bool> ConnectToInternet()
+        {
+            var response = string.Empty;
+
+            await WriteAsync("AT+CSQ\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+            //AT+CIFSR
+            await WriteAsync("AT+SAPBR=3,1,\"Contype\",\"GPRS\"\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+
+            await WriteAsync("AT+SAPBR=3,1,\"APN\",\"bandalarga.claro.com.br\"\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+
+            await WriteAsync("AT+SAPBR=3,1,\"USER\",\"claro\"\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+
+            await WriteAsync("AT+SAPBR=3,1,\"PWD\",\"claro\"\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+
+            await WriteAsync("AT+SAPBR=1,1\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+
+            await WriteAsync("AT+SAPBR=2,1\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+
+            await WriteAsync("AT+HTTPINIT\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+
+            await WriteAsync("AT+HTTPPARA=\"CID\",1\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+
+            await WriteAsync("AT+HTTPPARA=\"URL\",\"http://web25.redehost.com.br/info.php\"\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+
+            await WriteAsync("AT+HTTPACTION=0\r");
+            await Task.Delay(TimeSpan.FromSeconds(10));
+            response = await ReadAsync();
+
+            await WriteAsync("AT+HTTPREAD\r");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = await ReadAsync();
+
+            await WriteAsync("AT\r");
+            response = await ReadAsync();
+
+
+            var sss = 12;
+
+
+
+            //await WriteAsync("AT\r");
+            //response = await ReadAsync();
+
+            //await WriteAsync("AT+CPIN?\r");
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = await ReadAsync();
+
+            //await WriteAsync("AT+CREG?\r");
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = await ReadAsync();
+
+            //await WriteAsync("AT+CGATT?\r");
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = await ReadAsync();
+
+            //await WriteAsync("AT+CIPSHUT\r");
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = await ReadAsync();
+
+            //await WriteAsync("AT+CIPSTATUS\r");
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = await ReadAsync();
+
+            //await WriteAsync("AT+CIPMUX=0\r");
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = await ReadAsync();
+
+            //await WriteAsync(@"AT+CSTT=""claro.com.br"",""claro"",""claro""\r");
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = await ReadAsync();
+
+            //await WriteAsync("AT+CIICR\r");
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = await ReadAsync();
+
+            //await WriteAsync("AT+CIFSR\r");
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = await ReadAsync();
+
+            //await WriteAsync(@"AT+CIPSTART= ""TCP"", ""google.com"", ""80""\r");
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = await ReadAsync();
+
+            //await WriteAsync("AT+CIPSEND\r");
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = await ReadAsync();
+
+            //await WriteAsync("AT\r");
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = await ReadAsync();
+
+            return true;
+        }
         
         public async Task<List<ShortMessage>> ReadSms()
         {
@@ -121,7 +235,7 @@ namespace TCC.Sim800Driver
             }
             catch (Exception ex)
             {
-                throw ex;
+                var x = ex;
             }
             
             return messages;
@@ -130,15 +244,22 @@ namespace TCC.Sim800Driver
         public async Task<string> ReadAsync()
         {
             var result = "nothing";
-
-            var loadAsyncTask = _reader.LoadAsync(1024).AsTask();
-            
-            var bytesRead = await loadAsyncTask;
-
-            if (bytesRead > 0)
+            try
             {
-                result = _reader.ReadString(bytesRead);
+                var loadAsyncTask = _reader.LoadAsync(1024).AsTask();
+
+                var bytesRead = await loadAsyncTask;
+
+                if (bytesRead > 0)
+                {
+                    result = _reader.ReadString(bytesRead);
+                }
             }
+            catch (Exception e)
+            {
+                var x = e;
+            }
+           
             
             return result;
         }
@@ -146,17 +267,25 @@ namespace TCC.Sim800Driver
         private async Task<bool> WriteAsync(string command)
         {
             var result = false;
-            _writer.WriteString(command);
 
-            var storeAsyncTask = _writer.StoreAsync().AsTask();
-
-            var bytesWritten = await storeAsyncTask;
-            
-            if (bytesWritten > 0)
+            try
             {
-                result = true;
+                _writer.WriteString(command);
+
+                var storeAsyncTask = _writer.StoreAsync().AsTask();
+
+                var bytesWritten = await storeAsyncTask;
+
+                if (bytesWritten > 0)
+                {
+                    result = true;
+                }
             }
-            
+            catch (Exception e)
+            {
+                var x = e;
+            }
+
             return result;
         }
     }

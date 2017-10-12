@@ -54,6 +54,11 @@ namespace TCC
         {
             try
             {
+                //if (await _sim800Driver.InitializeConnection())
+                //{
+                //    var xx = await _sim800Driver.ConnectToInternet();
+                //}
+
                 DispatcherTimerClock();
 
                 if (await _obdDriver.InitializeConnection("danielvv"))
@@ -64,6 +69,7 @@ namespace TCC
 
                 if (await _sim800Driver.InitializeConnection())
                 {
+
                     DispatcherTimerSetupSms();
                 }
 

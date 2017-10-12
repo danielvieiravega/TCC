@@ -41,27 +41,47 @@ namespace TCC
 
         private WeatherForecast RetrieveWeatherForecast(IEnumerable<ForecastTime> forecastTime, int day)
         {
-            var amanha0Temp = forecastTime.First(d => d.From.Day == day && d.From.Hour >= 9);
-
-            var forecast = new WeatherForecast
+            try
             {
-                Icon = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha0Temp.Symbol.Var}.png",
-                    UriKind.Absolute)),
-                Temperature = ParseTemperature(amanha0Temp.Temperature.Value),
-                Description = _foreacastWheaterIconList[amanha0Temp.Symbol.Name],
-                DayOfTheWeek = amanha0Temp.From.ToString("dddd", new CultureInfo("pt-BR"))
-            };
+                var amanha0Temp = forecastTime.First(d => d.From.Day == day && d.From.Hour >= 9);
 
-            return forecast;
+                var forecast = new WeatherForecast
+                {
+                    Icon = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha0Temp.Symbol.Var}.png",
+                        UriKind.Absolute)),
+                    Temperature = ParseTemperature(amanha0Temp.Temperature.Value),
+                    Description = _foreacastWheaterIconList[amanha0Temp.Symbol.Name],
+                    DayOfTheWeek = amanha0Temp.From.ToString("dddd", new CultureInfo("pt-BR"))
+                };
+
+                return forecast;
+            }
+            catch (Exception e)
+            {
+                var adfa = e;
+                
+            }
+
+            return null;
         }
 
         private void SetWeatherForecast(IEnumerable<ForecastTime> forecastTime, int day, Image image, TextBlock txtTemp, TextBlock txtDesc, TextBlock txtDayOfWeek )
         {
-            var amanha0Temp = RetrieveWeatherForecast(forecastTime, day);
-            image.Source = amanha0Temp.Icon;
-            txtTemp.Text = amanha0Temp.Temperature;
-            txtDesc.Text = amanha0Temp.Description;
-            txtDayOfWeek.Text = amanha0Temp.DayOfTheWeek;
+            try
+            {
+
+                var amanha0Temp = RetrieveWeatherForecast(forecastTime, day);
+                if (amanha0Temp == null) return;
+                image.Source = amanha0Temp.Icon;
+                txtTemp.Text = amanha0Temp.Temperature;
+                txtDesc.Text = amanha0Temp.Description;
+                txtDayOfWeek.Text = amanha0Temp.DayOfTheWeek;
+            }
+            catch (Exception e)
+            {
+                var adfa = e;
+                
+            }
         }
 
         private async void DispatcherTimer_Tick_Forecast(object sender, object e)
