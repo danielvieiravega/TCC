@@ -13,7 +13,7 @@
                 <ColumnDefinition Width="383*"/>
                 <ColumnDefinition Width="365*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" x:Name="LblPressure" HorizontalAlignment="Left" Margin="40,373,0,0" TextWrapping="Wrap" Text="Pressão Combustível" VerticalAlignment="Top" FontSize="9"/>
+            <TextBlock Grid.Column="0" x:Name="LblPressure" HorizontalAlignment="Left" Margin="358,323,0,0" TextWrapping="Wrap" Text="Pressão Combustível" VerticalAlignment="Top" FontSize="9" Grid.ColumnSpan="2"/>
             <TextBlock Grid.Column="0" x:Name="LblThrotlePosition" HorizontalAlignment="Left" Margin="45,325,0,0" TextWrapping="Wrap" Text="Posição acelerador" VerticalAlignment="Top" FontSize="9"/>
             <TextBlock x:Name="TxtSms" HorizontalAlignment="Left" Margin="110.8,11,0,0" TextWrapping="Wrap" Text="  Nenhum SMS a exibir no momento!" VerticalAlignment="Top" Height="115" Width="256" Grid.Column="1"/>
             <Button x:Name="BtnClearSms" Content="Limpar" HorizontalAlignment="Left" Margin="200.8,137,0,0" VerticalAlignment="Top" Click="BtnClearSms_Click" Grid.Column="1" RenderTransformOrigin="1.164,0.475" FontWeight="Bold"/>
@@ -51,15 +51,15 @@
 
             <dataVisualization:RadLinearGauge Grid.Column="0" MinValue="0" MaxValue="100" LabelOffset="10" TickStep="10" LabelStep="20" Height="40" Margin="160,300,140,0">
                 <dataVisualization:LinearBarGaugeIndicator Value="100" Brush="#333333" Thickness="4" dataVisualization:RadLinearGauge.IndicatorOffset="-6"/>
-                <dataVisualization:LinearBarGaugeIndicator Name="BarFuelLevel" Value="50" IsAnimated="True" Brush="Cornsilk"  Thickness="4" dataVisualization:RadLinearGauge.IndicatorOffset="-6"/>
-                <dataVisualization:SegmentedLinearGaugeIndicator Value="100"  dataVisualization:RadLinearGauge.IndicatorOffset="-2">
-                    <dataVisualization:BarIndicatorSegment Length="100" Stroke="#999999" Thickness="1" HorizontalAlignment="Right" Width="83"/>
+                <dataVisualization:LinearBarGaugeIndicator Name="BarFuelLevel" Value="50" IsAnimated="True" Brush="Cornsilk"  Thickness="4" dataVisualization:RadLinearGauge.IndicatorOffset="-6" Margin="0"/>
+                <dataVisualization:SegmentedLinearGaugeIndicator Value="100"  dataVisualization:RadLinearGauge.IndicatorOffset="-2" Margin="11,0,0,0">
+                    <dataVisualization:BarIndicatorSegment Length="100" Stroke="#999999" Thickness="1" HorizontalAlignment="Right" Width="100" Margin="0,0,11,0"/>
                 </dataVisualization:SegmentedLinearGaugeIndicator>
             </dataVisualization:RadLinearGauge>
             <Image Grid.Column="0" Source="Assets/fuel.png" Margin="193,322,172.2,71"></Image>
             <Image Grid.Column="0" Source="Assets/fuel_temp.jpg" Margin="281,329,82.2,63"></Image>
             <TextBlock Grid.Column="0" x:Name="TxtTempEngine" TextAlignment="Center" TextWrapping="Wrap" Text="0 °C" Margin="306,329,38.2,56" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
-            <TextBlock Grid.Column="0" x:Name="TxtFuelPressure" TextAlignment="Center" TextWrapping="Wrap" Text="0 kPa" Margin="44,388,274.2,8" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
+            <TextBlock Grid.Column="0" x:Name="TxtFuelPressure" TextAlignment="Center" TextWrapping="Wrap" Text="0 kPa" Margin="362,338,331,58" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17" Grid.ColumnSpan="2"/>
             <TextBlock Grid.Column="0" x:Name="TxtThrotlePosition"  TextAlignment="Center" TextWrapping="Wrap" Text="0 %" Margin="55,338,285.2,58" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
             <Grid Name="GridTemp" Grid.Column="1" HorizontalAlignment="Left" Height="173" Margin="64.8,225,0,0" VerticalAlignment="Top" Width="304">
                 <Image Name="ImgTemp" HorizontalAlignment="Left" Height="70" Margin="13,24,0,0" VerticalAlignment="Top" Width="70" Source="Assets/GridPrevisaoTempo/default.png"/>

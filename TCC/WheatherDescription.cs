@@ -25,7 +25,9 @@ namespace TCC
                 {"light intensity shower rain", "Chuva leve"},
                 {"heavy intensity shower rain", "chuva intensa"},
                 {"ragged shower rain", "chuva esfarrapada"},
-                {"overcast clouds", "Nublado"}
+                {"overcast clouds", "Nublado"},
+                {"thunderstorm with rain", "Chuvas com trovoadas" },
+                {"clear sky", "ceu limpo" }
             };
         }
     }

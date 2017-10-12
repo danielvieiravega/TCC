@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using OpenWeatherMap;
 
 namespace TCC
 {
@@ -23,6 +26,44 @@ namespace TCC
             _dispatcherTimerForecastWheather.Start();
         }
 
+        private string ParseTemperature(double value)
+        {
+            return ((int)(value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
+        }
+
+        public class WeatherForecast
+        {
+            public BitmapImage Icon;
+            public string Temperature;
+            public string Description;
+            public string DayOfTheWeek;
+        }
+
+        private WeatherForecast RetrieveWeatherForecast(IEnumerable<ForecastTime> forecastTime, int day)
+        {
+            var amanha0Temp = forecastTime.First(d => d.From.Day == day && d.From.Hour >= 9);
+
+            var forecast = new WeatherForecast
+            {
+                Icon = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha0Temp.Symbol.Var}.png",
+                    UriKind.Absolute)),
+                Temperature = ParseTemperature(amanha0Temp.Temperature.Value),
+                Description = _foreacastWheaterIconList[amanha0Temp.Symbol.Name],
+                DayOfTheWeek = amanha0Temp.From.ToString("dddd", new CultureInfo("pt-BR"))
+            };
+
+            return forecast;
+        }
+
+        private void SetWeatherForecast(IEnumerable<ForecastTime> forecastTime, int day, Image image, TextBlock txtTemp, TextBlock txtDesc, TextBlock txtDayOfWeek )
+        {
+            var amanha0Temp = RetrieveWeatherForecast(forecastTime, day);
+            image.Source = amanha0Temp.Icon;
+            txtTemp.Text = amanha0Temp.Temperature;
+            txtDesc.Text = amanha0Temp.Description;
+            txtDayOfWeek.Text = amanha0Temp.DayOfTheWeek;
+        }
+
         private async void DispatcherTimer_Tick_Forecast(object sender, object e)
         {
             try
@@ -33,34 +74,20 @@ namespace TCC
 
                     var currentWeather = await _openWeatherMapClient.CurrentWeather.GetByName("Porto Alegre");
                     ImgTemp.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{currentWeather.Weather.Icon}.png", UriKind.Absolute));
-                    TxtTemp.Text = ((int)(currentWeather.Temperature.Value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
+                    TxtTemp.Text = ParseTemperature(currentWeather.Temperature.Value);
                     TxtTempDescription.Text = _foreacastWheaterIconList[currentWeather.Weather.Value];
                     TxtHoje.Text = dateTimeNow.ToString("dddd", new CultureInfo("pt-BR"));
 
                     var forecast = (await _openWeatherMapClient.Forecast.GetByName("Porto Alegre")).Forecast;
 
-                    var amanha0 = dateTimeNow.Day + 1;
-                    var amanha1 = dateTimeNow.Day + 2;
-                    var amanha2 = dateTimeNow.Day + 3;
+                    SetWeatherForecast(forecast, dateTimeNow.Day + 1, ImgTemp0, TxtAmanha0Temp, TxtAmanha0Desc,
+                        TxtAmanha0);
 
-                    var amanha0Temp = forecast.First(d => d.From.Day == amanha0 && d.From.Hour >= 9);
-                    ImgTemp0.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha0Temp.Symbol.Var}.png", UriKind.Absolute));
-                    TxtAmanha0Temp.Text = ((int)(amanha0Temp.Temperature.Value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
-                    TxtAmanha0Desc.Text = _foreacastWheaterIconList[amanha0Temp.Symbol.Name];
-                    TxtAmanha0.Text = amanha0Temp.From.ToString("dddd", new CultureInfo("pt-BR"));
+                    SetWeatherForecast(forecast, dateTimeNow.Day + 2, ImgTemp1, TxtAmanha1Temp, TxtAmanha1Desc,
+                        TxtAmanha1);
 
-                    var amanha1Temp = forecast.First(d => d.From.Day == amanha1 && d.From.Hour >= 9);
-                    ImgTemp1.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha1Temp.Symbol.Var}.png", UriKind.Absolute));
-                    TxtAmanha1Temp.Text = ((int)(amanha1Temp.Temperature.Value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
-                    TxtAmanha1Desc.Text = _foreacastWheaterIconList[amanha1Temp.Symbol.Name];
-                    TxtAmanha1.Text = amanha1Temp.From.ToString("dddd", new CultureInfo("pt-BR"));
-
-                    var amanha2Temp = forecast.First(d => d.From.Day == amanha2 && d.From.Hour >= 9);
-                    ImgTemp2.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha2Temp.Symbol.Var}.png", UriKind.Absolute));
-                    TxtAmanha2Temp.Text = ((int)(amanha2Temp.Temperature.Value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
-                    TxtAmanha2Desc.Text = _foreacastWheaterIconList[amanha2Temp.Symbol.Name];
-                    TxtAmanha2.Text = amanha2Temp.From.ToString("dddd", new CultureInfo("pt-BR"));
-
+                    SetWeatherForecast(forecast, dateTimeNow.Day + 3, ImgTemp2, TxtAmanha2Temp, TxtAmanha2Desc,
+                        TxtAmanha2);
                 });
             }
             catch (Exception exception)
