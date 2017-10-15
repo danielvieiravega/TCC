@@ -46,12 +46,12 @@
                 <dataVisualization:RadialBarGaugeIndicator Name="RadialBarGaugeRpm" Value="0" Brush="Gray" Thickness="12" dataVisualization:RadRadialGauge.IndicatorRadiusScale="0.83" Height="193" Margin="0,-6,0,0"/>
             </dataVisualization:RadRadialGauge>
 
-            <TextBlock Grid.Column="0" Name="TxtRpm" TextAlignment="Center" Text="0 x 1000 rpm" FontSize="20" Margin="322,124,350,259" VerticalAlignment="Center" HorizontalAlignment="Center" Height="29" Width="96" FontFamily="digital display tfb" FontWeight="Bold" Grid.ColumnSpan="2"/>
+            <TextBlock Grid.Column="0" Name="TxtRpm" TextAlignment="Center" Text="0 x 1000 rpm" FontSize="20" Margin="294,124,324,279" VerticalAlignment="Center" HorizontalAlignment="Center" Height="29" Width="125" FontFamily="digital display tfb" FontWeight="Bold" Grid.ColumnSpan="2"/>
             <TextBlock Grid.Column="0" x:Name="TxtTempIntake"  TextAlignment="Center" TextWrapping="Wrap" Text="0 °C" Margin="223,15,121.2,380" FontFamily="digital display tfb" FontWeight="Bold" FontSize="17"/>
 
             <dataVisualization:RadLinearGauge Grid.Column="0" MinValue="0" MaxValue="100" LabelOffset="10" TickStep="10" LabelStep="20" Height="40" Margin="160,300,140,0">
                 <dataVisualization:LinearBarGaugeIndicator Value="100" Brush="#333333" Thickness="4" dataVisualization:RadLinearGauge.IndicatorOffset="-6" Margin="0"/>
-                <dataVisualization:LinearBarGaugeIndicator Name="BarFuelLevel" Value="50" IsAnimated="True" Brush="Cornsilk"  Thickness="4" dataVisualization:RadLinearGauge.IndicatorOffset="-6" Margin="0"/>
+                <dataVisualization:LinearBarGaugeIndicator Name="BarFuelLevel" Value="0" IsAnimated="True" Brush="Cornsilk"  Thickness="4" dataVisualization:RadLinearGauge.IndicatorOffset="-6" Margin="0"/>
                 <dataVisualization:SegmentedLinearGaugeIndicator Value="100"  dataVisualization:RadLinearGauge.IndicatorOffset="-2" Margin="0">
                     <dataVisualization:BarIndicatorSegment Length="100" Stroke="#999999" Thickness="1" HorizontalAlignment="Left" Width="93" Margin="0,0,-3,0"/>
                 </dataVisualization:SegmentedLinearGaugeIndicator>

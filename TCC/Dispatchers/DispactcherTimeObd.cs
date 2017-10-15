@@ -12,52 +12,77 @@ namespace TCC
         {
             _dispatcherTimerOdb = new DispatcherTimer();
             _dispatcherTimerOdb.Tick += DispatcherTimer_Tick;
-            _dispatcherTimerOdb.Interval = new TimeSpan(0, 0, 1);
+            _dispatcherTimerOdb.Interval = new TimeSpan(0, 0, 2);
             _dispatcherTimerOdb.Start();
         }
 
         private async void DispatcherTimer_Tick(object sender, object e)
         {
-            if (IsClosed)
-            {
-                _dispatcherTimerOdb.Stop();
-                return;
-            }
+            var xxx = 123;
+            //if (IsClosed)
+            //{
+            //    _dispatcherTimerOdb.Stop();
+            //    return;
+            //}
 
             try
             {
                 await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-                {
+                {                    
                     var currentSpeed = await _obdDriver.GetSpeed();
                     var speed = currentSpeed > MaxSpeed ? MaxSpeed : currentSpeed;
-                    var rpm = await _obdDriver.GetRpm();
-                    var engineTemp = await _obdDriver.GetEngineTemperature();
-                    var intakeTemp = await _obdDriver.GetIntakeAirTemperature();
-                    var throtlePos = await _obdDriver.GetThrottlePosition();
-                    var fuelPres = await _obdDriver.GetFuelPressure();
+
+                    if (speed != 0)
+                    {
+                        RadialBarGaugeSpeed.Value = speed;
+                        TxtSpeed.Text = speed + " km/h";
+                    }
+
                     var fuelTankLevel = await _obdDriver.GetFuelTankLevelInput();
+                    if (fuelTankLevel != 0 && fuelTankLevel <= 100.0)
+                    {
+                        BarFuelLevel.Value = fuelTankLevel;
+                    }
 
-                    RadialBarGaugeSpeed.Value = speed;
-                    TxtSpeed.Text = speed + " km/h";
+                    var engineTemp = await _obdDriver.GetEngineTemperature();
+                    if (engineTemp > 0 )
+                    {
+                        TxtTempEngine.Text = engineTemp + " °C";
+                    }
+                    
+                    var intakeTemp = await _obdDriver.GetIntakeAirTemperature();
+                    if (intakeTemp > 0)
+                    {
+                        TxtTempIntake.Text = intakeTemp + " °C";
+                    }
 
-                    var normalizedRpm = Math.Round(rpm / 1000);
+                    var throtlePos = await _obdDriver.GetThrottlePosition();
+                    if (throtlePos > 0)
+                    {
+                        TxtThrotlePosition.Text = (int)throtlePos + " %";
+                    }
 
-                    RadialBarGaugeRpm.Value = normalizedRpm;
-                    TxtRpm.Text = normalizedRpm + " x 1000 rpm";
+                    var fuelPres = await _obdDriver.GetFuelPressure();
+                    if (fuelPres > 0)
+                    {
+                        TxtFuelPressure.Text = fuelPres + " kPa";
+                    }
 
-                    TxtTempEngine.Text = engineTemp + " °C";
-                    TxtTempIntake.Text = intakeTemp + " °C";
-                    TxtFuelPressure.Text = fuelPres + " kPa";
-                    TxtThrotlePosition.Text = (int)throtlePos + " %";
-
-                    BarFuelLevel.Value = fuelTankLevel;
+                    //var rpm = await _obdDriver.GetRpm();
+                    //if (rpm != 0)
+                    //{
+                    //    var normalizedRpm = Math.Round(rpm / 1000);
+                    //    TxtRpm.Text = normalizedRpm + " x 1000 rpm";
+                    //    RadialBarGaugeRpm.Value = normalizedRpm;
+                    //}
+                    
 
                     try
                     {
                         var dataFeed = new ThingSpeakFeed
                         {
                             Field1 = speed.ToString(CultureInfo.InvariantCulture),
-                            Field2 = rpm.ToString(CultureInfo.InvariantCulture),
+                            //Field2 = rpm.ToString(CultureInfo.InvariantCulture),
                             Field3 = fuelPres.ToString(CultureInfo.InvariantCulture),
                             Field4 = engineTemp.ToString(CultureInfo.InvariantCulture),
                             Field5 = throtlePos.ToString(CultureInfo.InvariantCulture),
@@ -70,10 +95,11 @@ namespace TCC
                     {
                         // ignored
                     }
-                });
+        });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                var sdfa = ex;
                 // ignored
             }
         }

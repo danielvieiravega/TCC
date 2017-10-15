@@ -7,6 +7,7 @@ using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using MetroLog;
 using TCC.ODBDriver.Services;
+using System.Linq;
 
 namespace TCC.ODBDriver
 {
@@ -20,7 +21,7 @@ namespace TCC.ODBDriver
 
         private StreamSocket _streamSocket;
         
-        public async Task<bool> InitializeConnection(string deviceName)
+        public async Task<bool> InitializeConnection()
         {
             var result = false;
             var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
@@ -94,7 +95,7 @@ namespace TCC.ODBDriver
                 IAsyncOperation<uint> count = _reader.LoadAsync(512);
                 count.AsTask().Wait();
 
-                result = _reader.ReadString(count.GetResults()).Trim('>');
+                result = _reader.ReadString(count.GetResults());
             }
             catch (Exception e)
             {
@@ -116,9 +117,13 @@ namespace TCC.ODBDriver
             {
                 var response = await SendCommand(GetCommand(Mode.CurrentData, PID.Speed));
 
-                if (HasValidLength(response) && response.Contains("410D"))
+                if (!response.Contains("41 0D"))
+                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.Speed));
+
+                if (HasValidLength(response) && response.Contains("0D"))
                 {
-                    result = ParseData(NormalizeResponse(response), PID.Speed);
+                    response = NormalizeResponse(response, "410D");
+                    result = ParseData(response, PID.Speed);
                 }
             }
             catch (Exception e)
@@ -135,10 +140,13 @@ namespace TCC.ODBDriver
             try
             {
                 var response = await SendCommand(GetCommand(Mode.CurrentData, PID.EngineRpm));
+                if (!response.Contains("41 0C"))
+                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.EngineRpm));
 
-                if (HasValidLength(response) && response.Contains("410C"))
+                if (HasValidLength(response) && response.Contains("0C"))
                 {
-                    result = ParseData(NormalizeResponse(response), PID.EngineRpm);
+                    response = NormalizeResponse(response, "410C");
+                    result = ParseData(response, PID.EngineRpm);
                 }
             }
             catch (Exception e)
@@ -155,10 +163,13 @@ namespace TCC.ODBDriver
             try
             {
                 var response = await SendCommand(GetCommand(Mode.CurrentData, PID.EngineTemperature));
+                if (!response.Contains("41 05"))
+                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.EngineTemperature));
 
-                if (HasValidLength(response) && response.Contains("4105"))
+                if (HasValidLength(response) && response.Contains("05"))
                 {
-                    result = ParseData(NormalizeResponse(response), PID.EngineTemperature);
+                    response = NormalizeResponse(response, "4105");
+                    result = ParseData(response, PID.EngineTemperature);
                 }
             }
             catch (Exception e)
@@ -175,10 +186,13 @@ namespace TCC.ODBDriver
             try
             {
                 var response = await SendCommand(GetCommand(Mode.CurrentData, PID.FuelPressure));
+                if (!response.Contains("41 0A"))
+                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.FuelPressure));
 
-                if (HasValidLength(response) && response.Contains("410A"))
+                if (HasValidLength(response) && response.Contains("0A"))
                 {
-                    result = ParseData(NormalizeResponse(response), PID.FuelPressure);
+                    response = NormalizeResponse(response, "410A");
+                    result = ParseData(response, PID.FuelPressure);
                 }
             }
             catch (Exception e)
@@ -195,10 +209,13 @@ namespace TCC.ODBDriver
             try
             {
                 var response = await SendCommand(GetCommand(Mode.CurrentData, PID.ThrottlePosition));
+                if (!response.Contains("41 11"))
+                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.ThrottlePosition));
 
-                if (HasValidLength(response) && response.Contains("4111"))
+                if (HasValidLength(response) && response.Contains("11"))
                 {
-                    result = ParseData(NormalizeResponse(response), PID.ThrottlePosition);
+                    response = NormalizeResponse(response, "4111");
+                    result = ParseData(response, PID.ThrottlePosition);
                 }
             }
             catch (Exception e)
@@ -215,15 +232,46 @@ namespace TCC.ODBDriver
             try
             {
                 var response = await SendCommand(GetCommand(Mode.CurrentData, PID.IntakeAirTemperature));
+                if (!response.Contains("41 0F"))
+                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.IntakeAirTemperature));
 
-                if (HasValidLength(response) && response.Contains("410F"))
+                if (HasValidLength(response) && response.Contains("0F"))
                 {
-                    result = ParseData(NormalizeResponse(response), PID.IntakeAirTemperature);
+                    response = NormalizeResponse(response, "410F");
+                    result = ParseData(response, PID.IntakeAirTemperature);
                 }
             }
             catch (Exception e)
             {
                 LoggingServices.Instance.WriteLine<ObdDriver>($"Failure getting IntakeAirTemperature: {e.Message}", LogLevel.Warn);
+            }
+
+            return result;
+        }
+
+        private async Task<double> RetrieveData(Mode mode, PID pid)
+        {
+            var result = 0.0;
+            var response = string.Empty;
+            var retries = 3;
+            for (int i = 0; i < retries; i++)
+            {
+                response = await SendCommand(GetCommand(mode, pid));
+
+                if ((!response.Contains($"41 {pid.ToString()}")) || (!response.Contains($"41{pid.ToString()}")))
+                {
+                    response = await SendCommand(GetCommand(mode, pid));
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            if (response.Contains(pid.ToString()))
+            {
+                response = NormalizeResponse(response, "412F");
+                result = ParseData(response, PID.FuelTankLevelInput);
             }
 
             return result;
@@ -235,10 +283,13 @@ namespace TCC.ODBDriver
             try
             {
                 var response = await SendCommand(GetCommand(Mode.CurrentData, PID.FuelTankLevelInput));
+                if (!response.Contains("41 2F"))
+                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.FuelTankLevelInput));
 
-                if (HasValidLength(response) && response.Contains("412F"))
+                if (HasValidLength(response) && response.Contains("2F"))
                 {
-                    result = ParseData(NormalizeResponse(response), PID.FuelTankLevelInput);
+                    response = NormalizeResponse(response, "412F");
+                    result = ParseData(response, PID.FuelTankLevelInput);
                 }
             }
             catch (Exception e)
@@ -268,6 +319,8 @@ namespace TCC.ODBDriver
         private static double ParseData(string response, PID pid)
         {
             var result = 0.0;
+            if (response.Length <= 4)
+                return result;
             try
             {
                 switch (pid)
@@ -330,14 +383,22 @@ namespace TCC.ODBDriver
             return result;
         }
         
-        private static string NormalizeResponse(string res)
+        private static string NormalizeResponse(string res, string delimiter)
         {
-            return res.Replace("\r", "");
+            var result = res.Replace(" ", "").Replace(">","");
+            var resSplitted = result.Split('\r');
+            var expectedRes = resSplitted.FirstOrDefault(x => x.Contains(delimiter));
+
+            if (expectedRes != null)
+                return expectedRes;
+            
+            return res.Replace("\r", "").Replace(" ", "");
         }
 
         private static bool HasValidLength(string res)
         {
-            return res.Length < 10;
+            //return res.Length < 10;
+            return true;
         }
 
         public async Task Close()

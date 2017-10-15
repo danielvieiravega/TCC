@@ -61,7 +61,7 @@ namespace TCC
 
                 DispatcherTimerClock();
 
-                if (await _obdDriver.InitializeConnection("danielvv"))
+                if (await _obdDriver.InitializeConnection())
                 {
                     DispatcherTimerOdb();
                     IsClosed = false;

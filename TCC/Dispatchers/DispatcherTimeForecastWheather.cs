@@ -22,7 +22,7 @@ namespace TCC
         {
             _dispatcherTimerForecastWheather = new DispatcherTimer();
             _dispatcherTimerForecastWheather.Tick += DispatcherTimer_Tick_Forecast;
-            _dispatcherTimerForecastWheather.Interval = new TimeSpan(0, 0, 10);
+            _dispatcherTimerForecastWheather.Interval = new TimeSpan(0, 0, 1);
             _dispatcherTimerForecastWheather.Start();
         }
 
@@ -108,6 +108,8 @@ namespace TCC
 
                     SetWeatherForecast(forecast, dateTimeNow.Day + 3, ImgTemp2, TxtAmanha2Temp, TxtAmanha2Desc,
                         TxtAmanha2);
+
+                    _dispatcherTimerForecastWheather.Interval = new TimeSpan(0, 1, 0);
                 });
             }
             catch (Exception exception)
