@@ -254,10 +254,11 @@ namespace TCC.ODBDriver
             var result = 0.0;
             var response = string.Empty;
             var retries = 3;
+
+            response = await SendCommand(GetCommand(mode, pid));
+
             for (int i = 0; i < retries; i++)
             {
-                response = await SendCommand(GetCommand(mode, pid));
-
                 if ((!response.Contains($"41 {pid.ToString()}")) || (!response.Contains($"41{pid.ToString()}")))
                 {
                     response = await SendCommand(GetCommand(mode, pid));
@@ -270,8 +271,8 @@ namespace TCC.ODBDriver
 
             if (response.Contains(pid.ToString()))
             {
-                response = NormalizeResponse(response, "412F");
-                result = ParseData(response, PID.FuelTankLevelInput);
+                response = NormalizeResponse(response, $"41{pid.ToString()}");
+                result = ParseData(response, pid);
             }
 
             return result;
@@ -282,6 +283,8 @@ namespace TCC.ODBDriver
             var result = 0.0;
             try
             {
+                //result = await RetrieveData(Mode.CurrentData, PID.FuelTankLevelInput);
+
                 var response = await SendCommand(GetCommand(Mode.CurrentData, PID.FuelTankLevelInput));
                 if (!response.Contains("41 2F"))
                     response = await SendCommand(GetCommand(Mode.CurrentData, PID.FuelTankLevelInput));
@@ -298,22 +301,6 @@ namespace TCC.ODBDriver
             }
 
             return result;
-        }
-
-        public interface IParseData
-        {
-            double Parse(string response);
-        }
-
-        public class ParseSpeed : IParseData
-        {
-            public double Parse(string response)
-            {
-                var speedHexString = response.Substring(4);
-                var speed = Convert.ToInt32(speedHexString, 16);
-
-                return Convert.ToDouble(speed);
-            }
         }
         
         private static double ParseData(string response, PID pid)
@@ -411,6 +398,22 @@ namespace TCC.ODBDriver
             }
             _deviceService.Dispose();
             _deviceService = null;
+        }
+
+        public interface IParseData
+        {
+            double Parse(string response);
+        }
+
+        public class ParseSpeed : IParseData
+        {
+            public double Parse(string response)
+            {
+                var speedHexString = response.Substring(4);
+                var speed = Convert.ToInt32(speedHexString, 16);
+
+                return Convert.ToDouble(speed);
+            }
         }
     }
 }
