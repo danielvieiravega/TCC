@@ -18,13 +18,6 @@ namespace TCC
 
         private async void DispatcherTimer_Tick(object sender, object e)
         {
-            var xxx = 123;
-            //if (IsClosed)
-            //{
-            //    _dispatcherTimerOdb.Stop();
-            //    return;
-            //}
-
             try
             {
                 await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
@@ -32,14 +25,14 @@ namespace TCC
                     var currentSpeed = await _obdDriver.GetSpeed();
                     var speed = currentSpeed > MaxSpeed ? MaxSpeed : currentSpeed;
 
-                    if (speed != 0)
+                    if (Math.Abs(speed) > 0)
                     {
                         RadialBarGaugeSpeed.Value = speed;
                         TxtSpeed.Text = speed + " km/h";
                     }
 
                     var fuelTankLevel = await _obdDriver.GetFuelTankLevelInput();
-                    if (fuelTankLevel != 0 && fuelTankLevel <= 100.0)
+                    if (Math.Abs(fuelTankLevel) > 0 && fuelTankLevel <= 100.0)
                     {
                         BarFuelLevel.Value = fuelTankLevel;
                     }
@@ -68,14 +61,14 @@ namespace TCC
                         TxtFuelPressure.Text = fuelPres + " kPa";
                     }
 
-                    //var rpm = await _obdDriver.GetRpm();
-                    //if (rpm != 0)
-                    //{
-                    //    var normalizedRpm = Math.Round(rpm / 1000);
-                    //    TxtRpm.Text = normalizedRpm + " x 1000 rpm";
-                    //    RadialBarGaugeRpm.Value = normalizedRpm;
-                    //}
-                    
+                    var rpm = await _obdDriver.GetRpm();
+                    if (Math.Abs(rpm) > 0)
+                    {
+                        var normalizedRpm = Math.Round(rpm / 1000);
+                        TxtRpm.Text = normalizedRpm + " x 1000 rpm";
+                        RadialBarGaugeRpm.Value = normalizedRpm;
+                    }
+
 
                     try
                     {

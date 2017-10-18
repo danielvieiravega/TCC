@@ -30,7 +30,6 @@ namespace TCC.ODBDriver
             if (_deviceCollection.Count > 0)
             {
                 _selectedDevice = _deviceCollection[0];
-                //_selectedDevice = _deviceCollection.FirstOrDefault(x => x.Name == deviceName);
                 if (_selectedDevice != null)
                     _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
 
@@ -115,16 +114,7 @@ namespace TCC.ODBDriver
             var result = 0.0;
             try
             {
-                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.Speed));
-
-                if (!response.Contains("41 0D"))
-                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.Speed));
-
-                if (HasValidLength(response) && response.Contains("0D"))
-                {
-                    response = NormalizeResponse(response, "410D");
-                    result = ParseData(response, PID.Speed);
-                }
+                result = await RetrieveData(Mode.CurrentData, PID.Speed);
             }
             catch (Exception e)
             {
@@ -139,15 +129,7 @@ namespace TCC.ODBDriver
             var result = 0.0;
             try
             {
-                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.EngineRpm));
-                if (!response.Contains("41 0C"))
-                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.EngineRpm));
-
-                if (HasValidLength(response) && response.Contains("0C"))
-                {
-                    response = NormalizeResponse(response, "410C");
-                    result = ParseData(response, PID.EngineRpm);
-                }
+                result = await RetrieveData(Mode.CurrentData, PID.EngineRpm);
             }
             catch (Exception e)
             {
@@ -162,15 +144,7 @@ namespace TCC.ODBDriver
             var result = 0.0;
             try
             {
-                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.EngineTemperature));
-                if (!response.Contains("41 05"))
-                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.EngineTemperature));
-
-                if (HasValidLength(response) && response.Contains("05"))
-                {
-                    response = NormalizeResponse(response, "4105");
-                    result = ParseData(response, PID.EngineTemperature);
-                }
+                result = await RetrieveData(Mode.CurrentData, PID.EngineTemperature);
             }
             catch (Exception e)
             {
@@ -185,15 +159,7 @@ namespace TCC.ODBDriver
             var result = 0.0;
             try
             {
-                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.FuelPressure));
-                if (!response.Contains("41 0A"))
-                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.FuelPressure));
-
-                if (HasValidLength(response) && response.Contains("0A"))
-                {
-                    response = NormalizeResponse(response, "410A");
-                    result = ParseData(response, PID.FuelPressure);
-                }
+                result = await RetrieveData(Mode.CurrentData, PID.FuelPressure);
             }
             catch (Exception e)
             {
@@ -208,15 +174,7 @@ namespace TCC.ODBDriver
             var result = 0.0;
             try
             {
-                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.ThrottlePosition));
-                if (!response.Contains("41 11"))
-                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.ThrottlePosition));
-
-                if (HasValidLength(response) && response.Contains("11"))
-                {
-                    response = NormalizeResponse(response, "4111");
-                    result = ParseData(response, PID.ThrottlePosition);
-                }
+                result = await RetrieveData(Mode.CurrentData, PID.ThrottlePosition);
             }
             catch (Exception e)
             {
@@ -231,15 +189,7 @@ namespace TCC.ODBDriver
             var result = 0.0;
             try
             {
-                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.IntakeAirTemperature));
-                if (!response.Contains("41 0F"))
-                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.IntakeAirTemperature));
-
-                if (HasValidLength(response) && response.Contains("0F"))
-                {
-                    response = NormalizeResponse(response, "410F");
-                    result = ParseData(response, PID.IntakeAirTemperature);
-                }
+                result = await RetrieveData(Mode.CurrentData, PID.IntakeAirTemperature);
             }
             catch (Exception e)
             {
@@ -252,16 +202,18 @@ namespace TCC.ODBDriver
         private async Task<double> RetrieveData(Mode mode, PID pid)
         {
             var result = 0.0;
-            var response = string.Empty;
-            var retries = 3;
+            const int retries = 3;
 
-            response = await SendCommand(GetCommand(mode, pid));
+            var cmd = GetCommand(mode, pid);
+            var response = await SendCommand(cmd);
 
-            for (int i = 0; i < retries; i++)
+            var pidString = pid.ToString("X").Replace("000000", "");
+
+            for (var i = 0; i < retries; i++)
             {
-                if ((!response.Contains($"41 {pid.ToString()}")) || (!response.Contains($"41{pid.ToString()}")))
+                if (!response.Contains("41") && !response.Contains(pidString))
                 {
-                    response = await SendCommand(GetCommand(mode, pid));
+                    response = await SendCommand(cmd);
                 }
                 else
                 {
@@ -269,9 +221,9 @@ namespace TCC.ODBDriver
                 }
             }
 
-            if (response.Contains(pid.ToString()))
+            if (response.Contains(pidString))
             {
-                response = NormalizeResponse(response, $"41{pid.ToString()}");
+                response = NormalizeResponse(response, $"41{pidString}");
                 result = ParseData(response, pid);
             }
 
@@ -283,17 +235,7 @@ namespace TCC.ODBDriver
             var result = 0.0;
             try
             {
-                //result = await RetrieveData(Mode.CurrentData, PID.FuelTankLevelInput);
-
-                var response = await SendCommand(GetCommand(Mode.CurrentData, PID.FuelTankLevelInput));
-                if (!response.Contains("41 2F"))
-                    response = await SendCommand(GetCommand(Mode.CurrentData, PID.FuelTankLevelInput));
-
-                if (HasValidLength(response) && response.Contains("2F"))
-                {
-                    response = NormalizeResponse(response, "412F");
-                    result = ParseData(response, PID.FuelTankLevelInput);
-                }
+                result = await RetrieveData(Mode.CurrentData, PID.FuelTankLevelInput);
             }
             catch (Exception e)
             {
@@ -381,13 +323,7 @@ namespace TCC.ODBDriver
             
             return res.Replace("\r", "").Replace(" ", "");
         }
-
-        private static bool HasValidLength(string res)
-        {
-            //return res.Length < 10;
-            return true;
-        }
-
+        
         public async Task Close()
         {
             if (_streamSocket != null)
@@ -398,22 +334,6 @@ namespace TCC.ODBDriver
             }
             _deviceService.Dispose();
             _deviceService = null;
-        }
-
-        public interface IParseData
-        {
-            double Parse(string response);
-        }
-
-        public class ParseSpeed : IParseData
-        {
-            public double Parse(string response)
-            {
-                var speedHexString = response.Substring(4);
-                var speed = Convert.ToInt32(speedHexString, 16);
-
-                return Convert.ToDouble(speed);
-            }
         }
     }
 }
