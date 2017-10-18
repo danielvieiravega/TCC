@@ -128,11 +128,6 @@ namespace TCC.Sim800Driver
             await WriteAsync("AT\r");
             response = await ReadAsync();
 
-
-            var sss = 12;
-
-
-
             //await WriteAsync("AT\r");
             //response = await ReadAsync();
 

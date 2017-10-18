@@ -26,7 +26,7 @@ namespace TCC
             _dispatcherTimerForecastWheather.Start();
         }
 
-        private string ParseTemperature(double value)
+        private static string ParseTemperature(double value)
         {
             return ((int)(value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
         }
@@ -65,7 +65,13 @@ namespace TCC
             return null;
         }
 
-        private void SetWeatherForecast(IEnumerable<ForecastTime> forecastTime, int day, Image image, TextBlock txtTemp, TextBlock txtDesc, TextBlock txtDayOfWeek )
+        private void SetWeatherForecast(
+            IEnumerable<ForecastTime> forecastTime, 
+            int day, 
+            Image image, 
+            TextBlock txtTemp, 
+            TextBlock txtDesc, 
+            TextBlock txtDayOfWeek )
         {
             try
             {
