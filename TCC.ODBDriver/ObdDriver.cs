@@ -23,13 +23,15 @@ namespace TCC.ODBDriver
         
         public async Task<bool> InitializeConnection()
         {
+            var x = 0;
+
             var result = false;
             var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
             _deviceCollection = await DeviceInformation.FindAllAsync(device);
 
             if (_deviceCollection.Count > 0)
             {
-                _selectedDevice = _deviceCollection[0];
+                _selectedDevice = _deviceCollection[x];
                 if (_selectedDevice != null)
                     _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
 
@@ -202,29 +204,37 @@ namespace TCC.ODBDriver
         private async Task<double> RetrieveData(Mode mode, PID pid)
         {
             var result = 0.0;
-            const int retries = 3;
-
-            var cmd = GetCommand(mode, pid);
-            var response = await SendCommand(cmd);
-
-            var pidString = pid.ToString("X").Replace("000000", "");
-
-            for (var i = 0; i < retries; i++)
+            const int retries = 2;
+            try
             {
-                if (!response.Contains("41") && !response.Contains(pidString))
+
+                var cmd = GetCommand(mode, pid);
+                var response = await SendCommand(cmd);
+                await Task.Delay(500);
+                var pidString = pid.ToString("X").Replace("000000", "");
+
+                for (var i = 0; i < retries; i++)
                 {
-                    response = await SendCommand(cmd);
+                    if (/*!response.Contains("41") && */!response.Contains(pidString))
+                    {   
+                        response = await SendCommand(cmd);
+                        await Task.Delay(50);
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                else
+
+                if (response.Contains(pidString))
                 {
-                    break;
+                    response = NormalizeResponse(response, $"41{pidString}");
+                    result = ParseData(response, pid);
                 }
             }
-
-            if (response.Contains(pidString))
+            catch (Exception)
             {
-                response = NormalizeResponse(response, $"41{pidString}");
-                result = ParseData(response, pid);
+                //nothing
             }
 
             return result;
@@ -243,6 +253,33 @@ namespace TCC.ODBDriver
             }
 
             return result;
+        }
+
+        public async Task<AllData> GetAllData()
+        {
+            var result = new AllData();
+           
+            result.Speed = await RetrieveData(Mode.CurrentData, PID.Speed);
+           // await Task.Delay(50);
+            result.RPM = await RetrieveData(Mode.CurrentData, PID.EngineRpm);
+            //await Task.Delay(50);
+            result.FuelTankLevelInput = await RetrieveData(Mode.CurrentData, PID.FuelTankLevelInput);
+            //await Task.Delay(50);
+            result.IntakeAirTemperature = await RetrieveData(Mode.CurrentData, PID.IntakeAirTemperature);
+            //await Task.Delay(50);
+            result.EngineTemperature = await RetrieveData(Mode.CurrentData, PID.EngineTemperature);
+            //await Task.Delay(50);
+
+            return result;
+        }
+
+        public struct AllData
+        {
+            public double Speed;
+            public double RPM;
+            public double FuelTankLevelInput;
+            public double IntakeAirTemperature;
+            public double EngineTemperature;
         }
         
         private static double ParseData(string response, PID pid)

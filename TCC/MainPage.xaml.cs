@@ -67,11 +67,11 @@ namespace TCC
                     IsClosed = false;
                 }
 
-                if (await _sim800Driver.InitializeConnection())
-                {
+                //if (await _sim800Driver.InitializeConnection())
+                //{
 
-                    DispatcherTimerSetupSms();
-                }
+                //    DispatcherTimerSetupSms();
+                //}
 
                 DispatcherTimerSetupForecastWheather();
             }
