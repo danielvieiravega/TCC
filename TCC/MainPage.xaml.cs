@@ -61,11 +61,11 @@ namespace TCC
 
                 DispatcherTimerClock();
 
-                if (await _obdDriver.InitializeConnection())
-                {
-                    DispatcherTimerOdb();
-                    IsClosed = false;
-                }
+                //if (await _obdDriver.InitializeConnection())
+                //{
+                //    DispatcherTimerOdb();
+                //    IsClosed = false;
+                //}
 
                 //if (await _sim800Driver.InitializeConnection())
                 //{

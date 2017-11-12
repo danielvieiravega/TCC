@@ -201,7 +201,26 @@ namespace TCC.Sim800Driver
             await Task.Delay(TimeSpan.FromSeconds(1));
             result = await ReadAsync();
 
-            return ParseMessages(result);
+            /*
+               "REC UNREAD" Received unread messages
+               "REC READ" Received read messages
+               "STO UNSENT" Stored unsent messages
+               "STO SENT" Stored sent messages
+               "ALL" All messages
+             */
+
+            var unReadMessages = new List<ShortMessage>();
+            try
+            {
+                var messages = ParseMessages(result);
+                unReadMessages = messages.Where(m => m.Status.Contains("UNREAD")).ToList();
+            }
+            catch (Exception)
+            {
+                //Ignored
+            }
+            
+            return unReadMessages;
         }
 
         public List<ShortMessage> ParseMessages(string input)

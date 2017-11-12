@@ -49,8 +49,10 @@ namespace TCC
                 {
                     Icon = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha0Temp.Symbol.Var}.png",
                         UriKind.Absolute)),
-                    Temperature = ParseTemperature(amanha0Temp.Temperature.Value),
-                    Description = _foreacastWheaterIconList[amanha0Temp.Symbol.Name],
+                    //Temperature = ParseTemperature(amanha0Temp.Temperature.Value),
+                    Temperature = amanha0Temp.Temperature.Value + "ºC",
+                    //Description = _foreacastWheaterIconList[amanha0Temp.Symbol.Name],
+                    Description = amanha0Temp.Symbol.Name,
                     DayOfTheWeek = amanha0Temp.From.ToString("dddd", new CultureInfo("pt-BR"))
                 };
 
@@ -59,19 +61,19 @@ namespace TCC
             catch (Exception e)
             {
                 var adfa = e;
-                
+
             }
 
             return null;
         }
 
         private void SetWeatherForecast(
-            IEnumerable<ForecastTime> forecastTime, 
-            int day, 
-            Image image, 
-            TextBlock txtTemp, 
-            TextBlock txtDesc, 
-            TextBlock txtDayOfWeek )
+            IEnumerable<ForecastTime> forecastTime,
+            int day,
+            Image image,
+            TextBlock txtTemp,
+            TextBlock txtDesc,
+            TextBlock txtDayOfWeek)
         {
             try
             {
@@ -86,42 +88,46 @@ namespace TCC
             catch (Exception e)
             {
                 var adfa = e;
-                
+
             }
         }
 
         private async void DispatcherTimer_Tick_Forecast(object sender, object e)
         {
-            try
+
+            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                try
                 {
                     var dateTimeNow = PegaHoraBrasilia();
-
-                    var currentWeather = await _openWeatherMapClient.CurrentWeather.GetByName("Porto Alegre");
+                    const int portoAlegreId = 3452925;
+                    var currentWeather = await _openWeatherMapClient.CurrentWeather.GetByCityId(portoAlegreId, MetricSystem.Metric, OpenWeatherMapLanguage.PT);
                     ImgTemp.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{currentWeather.Weather.Icon}.png", UriKind.Absolute));
-                    TxtTemp.Text = ParseTemperature(currentWeather.Temperature.Value);
-                    TxtTempDescription.Text = _foreacastWheaterIconList[currentWeather.Weather.Value];
+                    //TxtTemp.Text = ParseTemperature(currentWeather.Temperature.Value);
+                    TxtTemp.Text = currentWeather.Temperature.Value + " °C";
+                    //TxtTempDescription.Text = _foreacastWheaterIconList[currentWeather.Weather.Value];
+                    TxtTempDescription.Text = currentWeather.Weather.Value;
                     TxtHoje.Text = dateTimeNow.ToString("dddd", new CultureInfo("pt-BR"));
 
-                    var forecast = (await _openWeatherMapClient.Forecast.GetByName("Porto Alegre")).Forecast;
+                    var forecast = (await _openWeatherMapClient.Forecast.GetByCityId(portoAlegreId, false, MetricSystem.Metric, OpenWeatherMapLanguage.PT)).Forecast;
 
                     SetWeatherForecast(forecast, dateTimeNow.Day + 1, ImgTemp0, TxtAmanha0Temp, TxtAmanha0Desc,
-                        TxtAmanha0);
+                            TxtAmanha0);
 
                     SetWeatherForecast(forecast, dateTimeNow.Day + 2, ImgTemp1, TxtAmanha1Temp, TxtAmanha1Desc,
-                        TxtAmanha1);
+                            TxtAmanha1);
 
                     SetWeatherForecast(forecast, dateTimeNow.Day + 3, ImgTemp2, TxtAmanha2Temp, TxtAmanha2Desc,
-                        TxtAmanha2);
+                            TxtAmanha2);
 
                     _dispatcherTimerForecastWheather.Interval = new TimeSpan(0, 1, 0);
-                });
-            }
-            catch (Exception exception)
-            {
-                var xx = exception;
-            }
+                }
+                catch (Exception exception)
+                {
+                    var xx = exception;
+                }
+            });
+
         }
     }
 }

@@ -23,16 +23,16 @@ namespace TCC
                 var sms = messages.LastOrDefault();
                 if (sms != null)
                 {
-                    var isSmsRead = sms.Status.Contains("READ");
-                    if (isSmsRead)
-                    {
+                    //var isSmsRead = sms.Status.Contains("READ");
+                    //if (isSmsRead)
+                    //{
                         await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                         {
                             TxtSms.Text = string.Empty;
                             TxtSms.Text = $" De: {sms.Sender}\n Mensagem: {sms.Message}";
                             BtnClearSms.Visibility = Visibility.Visible;
                         });
-                    }
+                    //}
                 }
             });
         }

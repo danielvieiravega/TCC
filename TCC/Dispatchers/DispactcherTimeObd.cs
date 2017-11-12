@@ -21,7 +21,7 @@ namespace TCC
         {
             try
             {
-                await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                await _dispatcher.RunAsync(CoreDispatcherPriority.High, async () =>
                 {
                     try
                     { 
@@ -67,29 +67,28 @@ namespace TCC
                         //    TxtFuelPressure.Text = fuelPres + " kPa";
                         //}
 
-                        //try
-                        //{
-                        //    var dataFeed = new ThingSpeakFeed
-                        //    {
-                        //        Field1 = speed.ToString(CultureInfo.InvariantCulture),
-                        //        Field2 = rpm.ToString(CultureInfo.InvariantCulture),
-                        //        //Field3 = fuelPres.ToString(CultureInfo.InvariantCulture),
-                        //        Field4 = engineTemp.ToString(CultureInfo.InvariantCulture),
-                        //        //Field5 = throtlePos.ToString(CultureInfo.InvariantCulture),
-                        //        Field6 = intakeTemp.ToString(CultureInfo.InvariantCulture),
-                        //        Field7 = fuelTankLevel.ToString(CultureInfo.InvariantCulture),
-                        //    };
-                        //    await _thingSpeakClient.UpdateFeedAsync(ThingSpeakWriteApiKey, dataFeed);
-                        //}
-                        //catch (Exception)
-                        //{
-                        //    // ignored
-                        //}
+                        try
+                        {
+                            var dataFeed = new ThingSpeakFeed
+                            {
+                                Field1 = speed.ToString(CultureInfo.InvariantCulture),
+                                Field2 = rpm.ToString(CultureInfo.InvariantCulture),
+                                //Field3 = fuelPres.ToString(CultureInfo.InvariantCulture),
+                                Field4 = engineTemp.ToString(CultureInfo.InvariantCulture),
+                                //Field5 = throtlePos.ToString(CultureInfo.InvariantCulture),
+                                Field6 = intakeTemp.ToString(CultureInfo.InvariantCulture),
+                                Field7 = fuelTankLevel.ToString(CultureInfo.InvariantCulture),
+                            };
+                            await _thingSpeakClient.UpdateFeedAsync(ThingSpeakWriteApiKey, dataFeed);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     }
                     catch (Exception)
                     {
-
-                        throw;
+                        // ignored
                     }
 
 
