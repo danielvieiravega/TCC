@@ -6,7 +6,7 @@ using Windows.Storage.Streams;
 
 namespace TCC.ODBDriver.Commands
 {
-    public abstract class Command
+    public abstract class Command : ICommand
     {
         private readonly DataReader _reader;
         private readonly DataWriter _writer;
@@ -18,6 +18,21 @@ namespace TCC.ODBDriver.Commands
         {
             _reader = reader;
             _writer = writer;
+        }
+
+        public async Task<double> GetValue()
+        {
+            var result = 0.0;
+            try
+            {
+                result = await RetrieveData(Mode.CurrentData, PID);
+            }
+            catch (Exception)
+            {
+                //Ignored
+            }
+
+            return result;
         }
 
         private static string GetCommand(Mode mode, PID pid)

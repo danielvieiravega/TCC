@@ -4,7 +4,7 @@ using Windows.Storage.Streams;
 
 namespace TCC.ODBDriver.Commands
 {
-    public class RPM : Command, ICommand
+    public class RPM : Command
     {
         public RPM(DataReader reader, DataWriter writer) : base(reader, writer)
         {
@@ -12,20 +12,6 @@ namespace TCC.ODBDriver.Commands
 
         public override PID PID => PID.EngineRpm;
         
-        public async Task<double> GetValue()
-        {
-            var result = 0.0;
-            try
-            {
-                result = await RetrieveData(Mode.CurrentData, PID);
-            }
-            catch (Exception)
-            {
-                //Ignored
-            }
-
-            return result;
-        }
 
         public override double ParseData(string response, PID pid)
         {

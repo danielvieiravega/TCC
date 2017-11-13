@@ -106,10 +106,16 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AllData.cs" />
     <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\EngineTemperature.cs" />
+    <Compile Include="Commands\FuelPressure.cs" />
+    <Compile Include="Commands\FuelTankLevelInput.cs" />
     <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Commands\IntakeAirTemperature.cs" />
     <Compile Include="Commands\RPM.cs" />
     <Compile Include="Commands\Speed.cs" />
+    <Compile Include="Commands\ThrottlePosition.cs" />
     <Compile Include="Mode.cs" />
     <Compile Include="PID.cs" />
     <Compile Include="ObdDriver.cs" />

@@ -32,29 +32,34 @@ namespace TCC
                         RadialBarGaugeSpeed.Value = speed;
                         TxtSpeed.Text = speed + " km/h";
                         await Task.Delay(50);
+
                         var rpm = data.RPM;
                         var normalizedRpm = rpm / 1000.0;
                         TxtRpm.Text = normalizedRpm.ToString("#.#") + " x 1000 rpm";
                         RadialBarGaugeRpm.Value = normalizedRpm;
                         await Task.Delay(50);
+
                         var fuelTankLevel = data.FuelTankLevelInput;
                         if (Math.Abs(fuelTankLevel) > 0 && fuelTankLevel <= 100.0)
                         {
                             BarFuelLevel.Value = fuelTankLevel;
                         }
                         await Task.Delay(50);
+
                         var engineTemp = data.EngineTemperature;
                         if (engineTemp > 0)
                         {
                             TxtTempEngine.Text = engineTemp + " °C";
                         }
                         await Task.Delay(50);
+
                         var intakeTemp = data.IntakeAirTemperature;
                         if (intakeTemp > 0)
                         {
                             TxtTempIntake.Text = intakeTemp + " °C";
                         }
                         await Task.Delay(50);
+
                         //var throtlePos = await _obdDriver.GetThrottlePosition();
                         //if (throtlePos > 0)
                         //{
