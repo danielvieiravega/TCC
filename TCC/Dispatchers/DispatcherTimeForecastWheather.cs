@@ -12,7 +12,7 @@ namespace TCC
 {
     public sealed partial class MainPage
     {
-        public DateTime PegaHoraBrasilia()
+        public DateTime GetBraziliaTime()
         {
             return TimeZoneInfo.ConvertTime(DateTime.Now,
                 TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
@@ -25,12 +25,7 @@ namespace TCC
             _dispatcherTimerForecastWheather.Interval = new TimeSpan(0, 0, 1);
             _dispatcherTimerForecastWheather.Start();
         }
-
-        private static string ParseTemperature(double value)
-        {
-            return ((int)(value - 273.15)).ToString(CultureInfo.InvariantCulture) + " °C";
-        }
-
+        
         public class WeatherForecast
         {
             public BitmapImage Icon;
@@ -39,7 +34,7 @@ namespace TCC
             public string DayOfTheWeek;
         }
 
-        private WeatherForecast RetrieveWeatherForecast(IEnumerable<ForecastTime> forecastTime, int day)
+        private static WeatherForecast RetrieveWeatherForecast(IEnumerable<ForecastTime> forecastTime, int day)
         {
             try
             {
@@ -49,9 +44,7 @@ namespace TCC
                 {
                     Icon = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha0Temp.Symbol.Var}.png",
                         UriKind.Absolute)),
-                    //Temperature = ParseTemperature(amanha0Temp.Temperature.Value),
                     Temperature = amanha0Temp.Temperature.Value + "ºC",
-                    //Description = _foreacastWheaterIconList[amanha0Temp.Symbol.Name],
                     Description = amanha0Temp.Symbol.Name,
                     DayOfTheWeek = amanha0Temp.From.ToString("dddd", new CultureInfo("pt-BR"))
                 };
@@ -99,13 +92,11 @@ namespace TCC
             {
                 try
                 {
-                    var dateTimeNow = PegaHoraBrasilia();
+                    var dateTimeNow = GetBraziliaTime();
                     const int portoAlegreId = 3452925;
                     var currentWeather = await _openWeatherMapClient.CurrentWeather.GetByCityId(portoAlegreId, MetricSystem.Metric, OpenWeatherMapLanguage.PT);
                     ImgTemp.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{currentWeather.Weather.Icon}.png", UriKind.Absolute));
-                    //TxtTemp.Text = ParseTemperature(currentWeather.Temperature.Value);
                     TxtTemp.Text = currentWeather.Temperature.Value + " °C";
-                    //TxtTempDescription.Text = _foreacastWheaterIconList[currentWeather.Weather.Value];
                     TxtTempDescription.Text = currentWeather.Weather.Value;
                     TxtHoje.Text = dateTimeNow.ToString("dddd", new CultureInfo("pt-BR"));
 

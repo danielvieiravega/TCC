@@ -263,9 +263,9 @@ namespace TCC.ODBDriver
         {
             var result = new AllData();
             await Task.Delay(50);
-            //result.Speed = await RetrieveData(Mode.CurrentData, PID.Speed);
-            // await Task.Delay(50);
-            //result.RPM = await RetrieveData(Mode.CurrentData, PID.EngineRpm);
+            result.Speed = await new Speed(_reader, _writer).GetValue();
+            await Task.Delay(50);
+            result.RPM = await new RPM(_reader, _writer).GetValue();
             ////await Task.Delay(50);
             //result.FuelTankLevelInput = await RetrieveData(Mode.CurrentData, PID.FuelTankLevelInput);
             ////await Task.Delay(50);

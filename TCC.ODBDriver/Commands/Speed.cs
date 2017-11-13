@@ -11,7 +11,7 @@ namespace TCC.ODBDriver.Commands
         {
         }
 
-        public override PID PID { get => PID.Speed; }
+        public override PID PID => PID.Speed;
 
         public async Task<double> GetValue()
         {
