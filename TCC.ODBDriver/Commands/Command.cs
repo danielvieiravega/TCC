@@ -60,7 +60,7 @@ namespace TCC.ODBDriver.Commands
             {
                 var cmd = GetCommand(mode, pid);
                 var response = await SendCommand(cmd);
-                await Task.Delay(500);
+                await Task.Delay(50);
                 var pidString = pid.ToString("X").Replace("000000", "");
 
                 for (var i = 0; i < retries; i++)

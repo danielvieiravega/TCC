@@ -44,7 +44,7 @@ namespace TCC
                 {
                     Icon = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{amanha0Temp.Symbol.Var}.png",
                         UriKind.Absolute)),
-                    Temperature = amanha0Temp.Temperature.Value + "ºC",
+                    Temperature = (int)amanha0Temp.Temperature.Value + "°C",
                     Description = amanha0Temp.Symbol.Name,
                     DayOfTheWeek = amanha0Temp.From.ToString("dddd", new CultureInfo("pt-BR"))
                 };
@@ -96,7 +96,7 @@ namespace TCC
                     const int portoAlegreId = 3452925;
                     var currentWeather = await _openWeatherMapClient.CurrentWeather.GetByCityId(portoAlegreId, MetricSystem.Metric, OpenWeatherMapLanguage.PT);
                     ImgTemp.Source = new BitmapImage(new Uri($"http://openweathermap.org/img/w/{currentWeather.Weather.Icon}.png", UriKind.Absolute));
-                    TxtTemp.Text = currentWeather.Temperature.Value + " °C";
+                    TxtTemp.Text = (int)currentWeather.Temperature.Value + " °C";
                     TxtTempDescription.Text = currentWeather.Weather.Value;
                     TxtHoje.Text = dateTimeNow.ToString("dddd", new CultureInfo("pt-BR"));
 

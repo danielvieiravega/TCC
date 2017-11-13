@@ -5,24 +5,23 @@ using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
-using MetroLog;
-using TCC.ODBDriver.Services;
 using TCC.ODBDriver.Commands;
 
 namespace TCC.ODBDriver
 {
     public class ObdDriver
     {
-        private DeviceInformationCollection _deviceCollection;
-        private DeviceInformation _selectedDevice;
-        private RfcommDeviceService _deviceService;
         private DataReader _reader;
         private DataWriter _writer;
         private StreamSocket _streamSocket;
-                
+        private RfcommDeviceService _deviceService;
+
         public async Task<bool> InitializeConnection()
         {
-            var x = 0;
+            DeviceInformationCollection _deviceCollection;
+            DeviceInformation _selectedDevice;
+
+            var index = 0;
 
             var result = false;
             var device = RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort);
@@ -30,7 +29,7 @@ namespace TCC.ODBDriver
 
             if (_deviceCollection.Count > 0)
             {
-                _selectedDevice = _deviceCollection[x];
+                _selectedDevice = _deviceCollection[index];
                 if (_selectedDevice != null)
                     _deviceService = await RfcommDeviceService.FromIdAsync(_selectedDevice.Id);
 
@@ -51,9 +50,9 @@ namespace TCC.ODBDriver
                     }
                     catch (Exception e)
                     {
-                        LoggingServices.Instance.WriteLine<ObdDriver>($"Failure sending initialization commands: {e.Message}", LogLevel.Fatal);
+                        var xx = e;
                     }
-                    
+
                 }
             }
 
@@ -70,12 +69,12 @@ namespace TCC.ODBDriver
         }
 
         /// <summary>
-        /// Initializes the communication with the ELM327
+        /// Send the initilization commands to the ELM327
         /// </summary>
         private async Task SendInitializationCommands()
         {
             await SendCommand("ATZ\r");
-            
+
             await SendCommand("ATSP6\r");
 
             await SendCommand("ATH0\r");
@@ -99,12 +98,12 @@ namespace TCC.ODBDriver
             }
             catch (Exception e)
             {
-                LoggingServices.Instance.WriteLine<ObdDriver>($"Failure sending sending command: {e.Message}", LogLevel.Warn);
+                var xx = e;
             }
 
             return result;
         }
-        
+
         public async Task<double> GetSpeed()
         {
             var result = await new Speed(_reader, _writer).GetValue();
@@ -170,7 +169,7 @@ namespace TCC.ODBDriver
             await Task.Delay(50);
 
             return result;
-        }        
+        }
 
         public async Task Close()
         {
@@ -185,4 +184,3 @@ namespace TCC.ODBDriver
         }
     }
 }
-    
