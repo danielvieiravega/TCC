@@ -24,7 +24,10 @@ namespace TCC
                 await _dispatcher.RunAsync(CoreDispatcherPriority.High, async () =>
                 {
                     try
-                    { 
+                    {
+                        var aa = await _obdDriver.GetSpeed();
+                        var av = await _obdDriver.GetRpm();
+
                         var data = await _obdDriver.GetAllData();
 
                         var currentSpeed = data.Speed;

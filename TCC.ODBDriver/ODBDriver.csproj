@@ -106,12 +106,17 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Commands\RPM.cs" />
+    <Compile Include="Commands\Speed.cs" />
     <Compile Include="Mode.cs" />
     <Compile Include="PID.cs" />
     <Compile Include="ObdDriver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ILoggingServices.cs" />
     <Compile Include="Services\LoggingServices.cs" />
+    <Compile Include="StreamSocketProvider.cs" />
     <EmbeddedResource Include="Properties\TCC.ODBDriver.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -123,7 +128,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Commands\" />
+    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
