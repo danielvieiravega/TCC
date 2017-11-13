@@ -156,17 +156,17 @@ namespace TCC.ODBDriver
         public async Task<AllData> GetAllData()
         {
             var result = new AllData();
-            await Task.Delay(50);
+            //await Task.Delay(50);
             result.Speed = await new Speed(_reader, _writer).GetValue();
-            await Task.Delay(50);
+            //await Task.Delay(50);
             result.RPM = await new RPM(_reader, _writer).GetValue();
-            await Task.Delay(50);
+            //await Task.Delay(50);
             result.FuelTankLevelInput = await new FuelTankLevelInput(_reader, _writer).GetValue();
-            await Task.Delay(50);
+            //await Task.Delay(50);
             result.IntakeAirTemperature = await new IntakeAirTemperature(_reader, _writer).GetValue();
-            await Task.Delay(50);
+            //await Task.Delay(50);
             result.EngineTemperature = await new EngineTemperature(_reader, _writer).GetValue();
-            await Task.Delay(50);
+            //await Task.Delay(50);
 
             return result;
         }

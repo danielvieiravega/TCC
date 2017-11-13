@@ -28,7 +28,7 @@ namespace TCC
         private readonly Sim800LDriver _sim800Driver = new Sim800LDriver(); 
         private readonly ThingSpeakClient _thingSpeakClient = new ThingSpeakClient(false);
         private readonly OpenWeatherMapClient _openWeatherMapClient = new OpenWeatherMapClient(WeatherApi);
-        private readonly Dictionary<string, string> _foreacastWheaterIconList;
+        //private readonly Dictionary<string, string> _foreacastWheaterIconList;
 
         public MainPage()
         {
@@ -37,7 +37,7 @@ namespace TCC
 
             BtnClearSms.Visibility = Visibility.Collapsed;
             TxtSms.Text = DefaulSmsMessage;
-            _foreacastWheaterIconList = WheatherDescription.GetDictionary();
+            //_foreacastWheaterIconList = WheatherDescription.GetDictionary();
         }
         
         private async void BtnClearSms_Click(object sender, RoutedEventArgs e)
@@ -54,11 +54,6 @@ namespace TCC
         {
             try
             {
-                //if (await _sim800Driver.InitializeConnection())
-                //{
-                //    var xx = await _sim800Driver.ConnectToInternet();
-                //}
-
                 DispatcherTimerClock();
 
                 if (await _obdDriver.InitializeConnection())
